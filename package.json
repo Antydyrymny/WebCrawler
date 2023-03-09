@@ -1,0 +1,16 @@
+{
+    "name": "webcrawler",
+    "version": "1.0.0",
+    "type": "module",
+    "description": "test project",
+    "main": "index.html",
+    "scripts": {
+        "start": "JS/main.js",
+        "test": "node --experimental-vm-modules node_modules/jest/bin/jest"
+    },
+    "author": "Konstantin Danovich",
+    "license": "ISC",
+    "devDependencies": {
+        "jest": "^29.5.0"
+    }
+}
