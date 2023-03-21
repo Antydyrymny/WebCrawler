@@ -1,62 +1,90 @@
 import { InnerNode, OuterNode } from './siteNodes.js';
 import { JSDOM } from 'jsdom';
 
-export { crawler, validateURL, processUrl, parseHTML };
-
-crawler('https://javascript.info/');
-
-async function crawler(urlString) {
+// Async breadth-first search, building a tree of links with a max number of links
+// takes in URL as string
+// returns the root InnerNode object with the map of website links
+async function crawler({ url: urlString, visited, maxNodeCount }) {
     const urlObj = validateURL(urlString);
-    if (!urlObj) return;
-
+    if (!urlObj) throw new Error('the URL is invalid');
     const treeRoot = new InnerNode(urlObj);
-    const visited = new Set();
     const toVisit = [treeRoot];
+    let iterationCount = 0;
+    // BFS
     while (toVisit.length) {
+        // Limit maximum tree levels
+        if (
+            ++iterationCount === +maxNodeCount ||
+            treeRoot.connections.size >= +maxNodeCount
+        )
+            break;
         const currentlyVisiting = toVisit.shift();
+        // Base case: already visited or Outer node
         if (visited.has(currentlyVisiting.url.href) || !currentlyVisiting.inner) continue;
         visited.add(currentlyVisiting.url.href);
+        // Process each site for links
         const containedNodes = await processUrl(currentlyVisiting.url);
         containedNodes.forEach((node) => {
             currentlyVisiting.connect(node);
         });
+        toVisit.push(...containedNodes);
     }
-    console.table(treeRoot.connections);
-    return treeRoot;
+    return { treeRoot: treeRoot, visitedUpdated: visited };
 }
 
-function validateURL(urlString, origin) {
-    const url = urlString[0] === '/' ? `${origin}${urlString}` : urlString;
+// Return URL object from valid urls, false otherwise
+function validateURL(urlString, origin = '', protocol = '') {
+    // const url = urlString[0] === '/' ? `${origin}${urlString}` : urlString;
+    let url = urlString;
+    // Relative link
+    if (url[0] === '/' && url[1] !== '/') url = `${origin}${urlString}`;
+    // Protocol relative link
+    else if (url.startsWith('//')) url = `${protocol}${urlString}`;
+    // Anchor, about:blank, mailto, tel, javascript executable link,
+    else if (
+        url.startsWith('#') ||
+        url.startsWith('about:blank') ||
+        url.startsWith('mailto') ||
+        url.startsWith('tel') ||
+        url.startsWith('javascript')
+    )
+        return false;
     try {
         const urlObj = new URL(url);
         return urlObj;
     } catch (error) {
-        console.error('the URL is invalid');
+        console.error(error.message);
         return false;
     }
 }
 
-async function processUrl(url) {
-    const origin = url.origin;
-    const domain = url.hostname;
+// Network requests
+async function processUrl(urlObj) {
+    const origin = urlObj.origin;
+    const domain = urlObj.hostname;
+    const protocol = urlObj.protocol;
     try {
-        const response = await fetch(url);
+        const response = await fetch(urlObj);
         if (!response.ok)
             throw new Error(`Request failed with status ${response.status}`);
         const html = await response.text();
-        return parseHTML(html, domain, origin);
+        return parseHTML(html, domain, origin, protocol);
     } catch (error) {
-        console.error(error.message);
+        console.error(error);
         return [];
     }
 }
 
-function parseHTML(htmlString, domain, origin) {
+// Build DOM of a site, get all URL
+function parseHTML(htmlString, domain, origin, protocol) {
     const innerLinks = [];
+    // Create a new JSDOM object
     const dom = new JSDOM(htmlString);
-    const links = dom.window.document.querySelectorAll('a');
+    // Get the root element of the new JSDOM object
+    const rootElement = dom.window.document;
+    const links = rootElement.querySelectorAll('a');
     links.forEach((link) => {
-        const urlObj = validateURL(link.href, origin);
+        const urlObj = validateURL(link.href, origin, protocol);
         if (!urlObj) return;
         if (urlObj.hostname === domain) {
             innerLinks.push(new InnerNode(urlObj));
@@ -64,3 +92,5 @@ function parseHTML(htmlString, domain, origin) {
     });
     return innerLinks;
 }
+
+export { crawler, validateURL, processUrl, parseHTML };

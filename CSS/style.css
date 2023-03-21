@@ -1,0 +1,103 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+#top {
+    background-color: #0c73fe;
+    height: 52vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#welcome {
+    margin: 0;
+}
+
+#colosseum {
+    position: fixed;
+    z-index: 1;
+    top: 80px;
+    left: 50px;
+}
+
+#colosseum img {
+    width: 15%;
+    height: 15%;
+}
+
+form {
+    z-index: 2;
+    width: 80%;
+    max-width: 600px;
+    margin: 0px auto;
+    padding: 1em;
+}
+
+input[type="date"] {
+    width: 100%;
+    height: 3em;
+    margin: 1em 0;
+    padding: 0.5em;
+    font-size: 1.2em;
+    border-radius: 10px;
+    border: none;
+    color: black;
+    background-color: white;
+}
+
+label {
+    position: relative;
+    top: 7px;
+    color: black;
+    margin: 0.5em 0 0.2em;
+    margin-bottom: 0px;
+    font-size: 0.9em;
+    text-align: left;
+    width: 100%;
+    display: block;
+}
+
+input[type="submit"] {
+    width: 100%;
+    height: 3em;
+    margin: 1em 0;
+    padding: 0.5em;
+    font-size: 1.2em;
+    border-radius: 10px;
+    border: none;
+    color: white;
+    background-color: #ff6f32;
+    cursor: pointer;
+}
+
+input.error {
+    border: #f54759 4px solid;
+}
+
+input.error:focus {
+    outline: none;
+}
+
+.bottom-bar {
+    height: 45%;
+    overflow: hidden;
+}
+
+.bottom-bar img {
+    position: fixed;
+    top: 51%;
+    width: 110%;
+    height: 55%;
+    object-fit: cover;
+    overflow: hidden;
+}
+
+@media only screen and (max-width: 768px) {}
