@@ -20,6 +20,7 @@ if (userID === null) {
         alert(`Failed to get user ID from the server, error: ${error.message}`);
     }
 }
+console.log(userID);
 // After page is loaded
 // createGraph(initialData);
 // On form submit:
