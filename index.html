@@ -4,23 +4,43 @@
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="/CSS/style.css" />
+        <!-- CSS -->
+        <link rel="stylesheet" href="assets/css/style.css" />
+        <link rel="stylesheet" href="assets/css/spinner.css" />
+        <!-- D3 CDN -->
         <script src="https://d3js.org/d3.v7.min.js"></script>
-        <title>Document</title>
+        <title>Webcrawler with graph visualization</title>
     </head>
-    <body style="display: flex">
+    <body>
+        <h1>Webcrawler with graph visualization</h1>
+        <article></article>
         <div class="graph">
-            <svg
-                style="border: 2px solid red; justify-self: center"
-                width="70vw"
-                height="70vh"
-                position="relative"
-            ></svg>
+            <div class="svg-wrapper">
+                <div id="spinner">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+                <svg></svg>
+            </div>
         </div>
-        <form id="webCrawlerQuerry">
-            <label for="query">Enter the site to explore</label><br />
-            <input type="text" name="query" autocomplete="off" />
-        </form>
-        <script type="module" src="/JS/main.js"></script>
+        <div class="form-wrapper">
+            <form id="webCrawlerQuerry">
+                <label for="query">Enter the site to explore</label><br />
+                <input
+                    type="text"
+                    name="query"
+                    placeholder="google.com"
+                    autocomplete="url"
+                />
+            </form>
+        </div>
+        <!-- Main script -->
+        <script type="module" src="/assets/js/main.js"></script>
     </body>
 </html>

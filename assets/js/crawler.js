@@ -4,7 +4,7 @@ import { JSDOM } from 'jsdom';
 // Async breadth-first search, building a tree of links with a max number of links
 // takes in URL as string
 // returns the root InnerNode object with the map of website links
-async function crawler({ url: urlString, visited, maxNodeCount }) {
+async function crawler({ url: urlString, explored, maxNodeCount }) {
     const urlObj = validateURL(urlString);
     if (!urlObj) throw new Error('the URL is invalid');
     const treeRoot = new InnerNode(urlObj);
@@ -16,12 +16,16 @@ async function crawler({ url: urlString, visited, maxNodeCount }) {
         if (
             ++iterationCount === +maxNodeCount ||
             treeRoot.connections.size >= +maxNodeCount
-        )
+        ) {
             break;
+        }
         const currentlyVisiting = toVisit.shift();
-        // Base case: already visited or Outer node
-        if (visited.has(currentlyVisiting.url.href) || !currentlyVisiting.inner) continue;
-        visited.add(currentlyVisiting.url.href);
+        // Base case: already explored or Outer node
+        if (explored.has(currentlyVisiting.url.href) || !currentlyVisiting.inner)
+            continue;
+        explored.add(currentlyVisiting.url.href);
+        currentlyVisiting.explored = true;
+
         // Process each site for links
         const containedNodes = await processUrl(currentlyVisiting.url);
         containedNodes.forEach((node) => {
@@ -29,7 +33,7 @@ async function crawler({ url: urlString, visited, maxNodeCount }) {
         });
         toVisit.push(...containedNodes);
     }
-    return { treeRoot: treeRoot, visitedUpdated: visited };
+    return { treeRoot: treeRoot, exploredUpdated: explored };
 }
 
 // Return URL object from valid urls, false otherwise
@@ -70,7 +74,7 @@ async function processUrl(urlObj) {
         const html = await response.text();
         return parseHTML(html, domain, origin, protocol);
     } catch (error) {
-        console.error(error);
+        console.error(error.message);
         return [];
     }
 }
@@ -82,9 +86,11 @@ function parseHTML(htmlString, domain, origin, protocol) {
     const dom = new JSDOM(htmlString);
     // Get the root element of the new JSDOM object
     const rootElement = dom.window.document;
+    // Check for base tag for correct origin of relative links
+    const base = rootElement.querySelector('base');
     const links = rootElement.querySelectorAll('a');
     links.forEach((link) => {
-        const urlObj = validateURL(link.href, origin, protocol);
+        const urlObj = validateURL(link.href, base ? base.href : origin, protocol);
         if (!urlObj) return;
         if (urlObj.hostname === domain) {
             innerLinks.push(new InnerNode(urlObj));

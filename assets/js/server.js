@@ -16,34 +16,38 @@ app.use(cors());
 // Handle get requests, sending unique ID for a user session
 app.get('/getID', (req, res) => {
     const uniqueId = uuidv4();
-    userData.set(uniqueId, { visited: new Set(), groups: [] });
+    userData.set(uniqueId, { explored: new Set(), addedNodes: new Set(), groups: [] });
     res.send(uniqueId);
 });
 // Handle post requests parsing request.body from JSON
-// and saving visited nodes to userData
+// and saving explored nodes to userData
 app.post('/crawl', async (req, res) => {
-    console.log(userData);
     const { id, url, maxNodeCount, baseGroup } = req.body;
-    const { visited, groups } = userData.get(id);
+    const { explored, groups, addedNodes } = userData.get(id);
     // Crawl the website
-    const { treeRoot, visitedUpdated } = await crawler({
+    const { treeRoot, exploredUpdated } = await crawler({
         url: url,
-        visited: visited,
+        explored: explored,
         maxNodeCount: maxNodeCount,
     });
     // Format the tree of links
-    const { graphData, groupsUpd } = interpretData({
+    const { graphData, groupsUpd, addedNodesUpd } = interpretData({
         treeRoot: treeRoot,
         groups: groups,
         baseGroup: baseGroup,
+        addedNodes: addedNodes,
     });
-    userData.set(id, { visited: visitedUpdated, groups: groupsUpd });
+    userData.set(id, {
+        explored: exploredUpdated,
+        groups: groupsUpd,
+        addedNodes: addedNodesUpd,
+    });
     res.send(graphData);
 });
 // Handle post requests to clear userData on a new graph input
 app.post('/clear', (req, res) => {
     const { id } = req.body;
-    userData.set(id, { visited: new Set(), groups: [] });
+    userData.set(id, { explored: new Set(), addedNodes: new Set(), groups: [] });
     res.send('Clear successful');
 });
 

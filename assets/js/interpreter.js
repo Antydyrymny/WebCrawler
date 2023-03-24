@@ -1,16 +1,20 @@
-export function interpretData({ treeRoot: tree, groups, baseGroup }) {
+export function interpretData({ treeRoot: tree, groups, baseGroup, addedNodes }) {
     const data = {};
     data.nodes = [];
     data.links = [];
     let distanceGroups = [];
-    let parsed = new Set();
+    // Uncheck the root node because it was already added before
+    // but we still need to parse the tree starting from it
+    if (addedNodes.has(tree.url.href)) addedNodes.delete(tree.url.href);
     recursiveParseTree(tree);
+
+    return { graphData: data, groupsUpd: groups, addedNodesUpd: addedNodes };
 
     function recursiveParseTree(tree) {
         const id = getId(tree.url);
-        // Base case: already parsed
-        if (parsed.has(id)) return;
-        parsed.add(id);
+        // Base case: already addedNodes
+        if (addedNodes.has(id)) return;
+        addedNodes.add(id);
         // Base case: outer node
         if (!tree.inner) {
             let curGroup;
@@ -33,11 +37,17 @@ export function interpretData({ treeRoot: tree, groups, baseGroup }) {
                 id: id,
                 group: curGroup,
                 distanceGroup: curDistanceGroup,
+                explored: false,
             });
             return;
         }
         // Main action and recursive case
-        data.nodes.push({ id: id, group: +baseGroup, distanceGroup: 1 });
+        data.nodes.push({
+            id: id,
+            group: +baseGroup,
+            distanceGroup: 1,
+            explored: tree.explored,
+        });
         Array.from(tree.connections).forEach(([targetNode, strength]) => {
             data.links.push({
                 source: id,
@@ -51,20 +61,20 @@ export function interpretData({ treeRoot: tree, groups, baseGroup }) {
     function getId(url) {
         return url.href;
     }
-    return { graphData: data, groupsUpd: groups };
 }
 
+// Example data structure
 // const data = {
 //     nodes: [
 //         { id: 'A', group: '1', distanceGroup: 1 },
 //         { id: 'B', group: '1', distanceGroup: 1 },
-//         { id: 'C', group: '2', distanceGroup: 1 },
-//         { id: 'D', group: '2', distanceGroup: 1 },
+//         { id: 'C', group: '2', distanceGroup: 2 },
+//         { id: 'D', group: '3', distanceGroup: 1 },
 //     ],
 //     links: [
 //         { source: 'A', target: 'B', strength: 1 },
 //         { source: 'B', target: 'A', strength: 1 },
-//         { source: 'B', target: 'C', strength: 1 },
+//         { source: 'B', target: 'C', strength: 2 },
 //         { source: 'C', target: 'D', strength: 1 },
 //         { source: 'D', target: 'A', strength: 1 },
 //     ],

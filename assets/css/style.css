@@ -1,0 +1,89 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+h1 {
+    text-align: center;
+    margin: 4rem 0 3rem 0
+}
+
+.graph {
+    display: flex;
+    justify-content: center;
+}
+
+.svg-wrapper {
+    position: relative;
+}
+
+svg {
+    width: 50vw;
+    min-width: 15rem;
+    height: 55vh;
+    display: block;
+    border: 1px solid grey;
+    border-radius: 0.4rem;
+}
+
+.nodes:hover {
+    cursor: grab;
+}
+
+.tooltip {
+    position: absolute;
+    padding: 0.6rem;
+    background-color: rgb(248, 248, 246);
+    border: 1px solid black;
+    border-radius: 0.3rem;
+}
+
+.tooltip a {
+    text-decoration: none;
+    color: black;
+}
+
+.tooltip-clickme {
+    margin-top: 0.2rem;
+}
+
+.tooltip a:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.tooltip a:visited {
+    color: inherit;
+}
+
+.tooltip-fullLink {
+    padding: 0.1rem;
+    position: absolute;
+    left: 1px;
+    border: 1px solid black;
+    border-radius: 0 0.2rem 0 0.3rem;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.89);
+    background-color: rgba(0, 0, 0, 0.788);
+    transition: opacity 0.3s;
+}
+
+.form-wrapper {
+    margin: 1.5rem;
+    display: flex;
+    justify-content: center;
+}
+
+#webCrawlerQuerry input {
+    width: 15rem;
+    max-width: 15rem;
+}
+
+@media only screen and (max-width: 768px) {}

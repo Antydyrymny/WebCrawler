@@ -3,6 +3,7 @@ class InnerNode {
         this.url = url;
         this.inner = true;
         this.connections = new Map();
+        this.explored = false;
     }
 
     connect(node) {
@@ -15,6 +16,7 @@ class OuterNode {
     constructor(url) {
         this.url = url;
         this.inner = false;
+        this.explored = false;
     }
 }
 

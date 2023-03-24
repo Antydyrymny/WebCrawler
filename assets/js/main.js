@@ -1,8 +1,10 @@
 import { createGraph } from './graph.js';
+import { initialData } from './initialData.js';
 
 const form = document.querySelector('form');
-const svg = document.querySelector('svg');
-
+const graph = document.querySelector('.graph');
+const svg = graph.querySelector('svg');
+const loadingSpinner = graph.querySelector('#spinner');
 // Request the unique ID from the server to handle post requests
 let userID = localStorage.getItem('userID');
 if (userID === null) {
@@ -14,7 +16,8 @@ if (userID === null) {
         alert(`Failed to get user ID from the server, error: ${error.message}`);
     }
 }
-
+// After page is loaded
+// createGraph(initialData);
 // On form submit:
 form.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -29,8 +32,10 @@ form.addEventListener('submit', async (event) => {
     form.query.value = '';
     // Clear svg
     svg.innerHTML = '';
-    const tooltip = document.querySelector('.graph div.tooltip');
+    const tooltip = graph.querySelector('.tooltip');
+    const descriptionTooltip = graph.querySelector('.tooltip-fullLink');
     if (tooltip) tooltip.remove();
+    if (descriptionTooltip) descriptionTooltip.remove();
     // Clear userData on the server to handle new request
     try {
         const response = await fetch('http://localhost:3000/clear', {
@@ -54,6 +59,8 @@ form.addEventListener('submit', async (event) => {
 });
 
 async function crawlWebsite({ url, maxNodeCount = 5, baseGroup = 1 }) {
+    // Start the loading spinner
+    loadingSpinner.classList.add('lds-roller');
     try {
         // Run crawler on the server
         const response = await fetch('http://localhost:3000/crawl', {
@@ -69,8 +76,12 @@ async function crawlWebsite({ url, maxNodeCount = 5, baseGroup = 1 }) {
             }),
         });
         // Get the data of links from server
-        return await response.json();
+        const graphData = await response.json();
+        // Stop the loading spinner
+        loadingSpinner.classList.remove('lds-roller');
+        return graphData;
     } catch (error) {
+        loadingSpinner.classList.remove('lds-roller');
         alert(error.message);
     }
 }

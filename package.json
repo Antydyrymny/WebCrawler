@@ -5,8 +5,8 @@
     "description": "test project",
     "main": "server.js",
     "scripts": {
-        "start": "JS/main.js",
-        "devStart": "nodemon JS/server.js",
+        "start": "assets/js/main.js",
+        "devStart": "nodemon assets/js/server.js",
         "test": "node --experimental-vm-modules node_modules/jest/bin/jest"
     },
     "author": "Konstantin Danovich",
