@@ -1,7 +1,7 @@
 import { createGraph } from './graph.js';
 import { initialData } from './initialData.js';
 
-// const route = `http://localhost:3000`;
+// const route = `http://localhost:3000/api`;
 const route = window.location.origin + '/assets/js/api';
 const form = document.querySelector('form');
 const graph = document.querySelector('.graph');

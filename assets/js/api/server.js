@@ -1,8 +1,8 @@
 import express from 'express';
 import cors from 'cors';
-import apiGetID from './api/getID.js';
-import apiCrawl from './api/crawl.js';
-import apiClear from './api/clear.js';
+import apiGetID from './getID.js';
+import apiCrawl from './crawl.js';
+import apiClear from './clear.js';
 
 // Create app
 const app = express();
