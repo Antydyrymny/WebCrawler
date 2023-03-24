@@ -1,15 +1,13 @@
 {
-    "version": 2,
-    "builds": [
-        {
-            "src": "assets/js/api/server.js",
-            "use": "@vercel/node"
+    "functions": {
+        "api/*": {
+            "runtime": "node@16",
+            "memory": 512
         }
-    ],
+    },
     "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "/index.html"
-        }
+        { "src": "/api/(.*)", "dest": "api/$1" },
+        { "handle": "filesystem" },
+        { "src": "/(.*)", "dest": "/index.html" }
     ]
 }
