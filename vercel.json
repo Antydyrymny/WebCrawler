@@ -2,16 +2,16 @@
     "version": 2,
     "routes": [
         {
+            "src": "/api/(.*)",
+            "dest": "/assets/js/api/$1"
+        },
+        {
             "src": "/(.*)",
             "dest": "/$1"
         },
         {
             "src": "/js/(.*)",
             "dest": "/assets/js/$1"
-        },
-        {
-            "src": "/server(.*)",
-            "dest": "/assets/js/server$1"
         }
     ]
 }

@@ -2,7 +2,7 @@ import { createGraph } from './graph.js';
 import { initialData } from './initialData.js';
 
 // const route = `http://localhost:3000`;
-const route = window.location.origin;
+const route = window.location.origin + '/assets/js/api';
 const form = document.querySelector('form');
 const graph = document.querySelector('.graph');
 const svg = graph.querySelector('svg');
