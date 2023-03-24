@@ -27,3 +27,14 @@ app.listen(port, () => {
 
 // Export app as a serverless function
 export default app;
+
+// "builds": [
+//     {
+//         "src": "/assets/js/api/server.js",
+//         "use": "@vercel/node"
+//     }
+// ],
+
+// { "src": "/api/(.*)", "dest": "assets/js/api/server.js" },
+// { "src": "/assets/js/(.*)", "dest": "assets/js/$1" },
+// { "src": "/assets/css/(.*)", "dest": "assets/css/$1" },
