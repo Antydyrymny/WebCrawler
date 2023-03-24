@@ -1,14 +1,11 @@
 {
     "version": 2,
-    "functions": {
-        "api/*": {
-            "include": "root/assets/js/api/*",
-            "memory": 512,
-            "maxDuration": 10,
-            "runtime": "vercel-node@0.12.0"
+    "builds": [
+        {
+            "src": "/assets/js/api/server.js",
+            "use": "@vercel/node"
         }
-    },
-
+    ],
     "routes": [
         { "src": "/api/(.*)", "dest": "assets/js/api/server.js" },
         { "src": "/assets/js/(.*)", "dest": "assets/js/$1" },
