@@ -2,6 +2,7 @@
     "version": 2,
     "functions": {
         "api/*": {
+            "include": "root/assets/js/api/*",
             "memory": 512,
             "maxDuration": 10,
             "runtime": "vercel-node@0.12.0"
