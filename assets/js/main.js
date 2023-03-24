@@ -1,7 +1,7 @@
 import { createGraph } from './graph.js';
 import { initialData } from './initialData.js';
 
-// const route = `http://localhost:3000`
+// const route = `http://localhost:3000`;
 const route = 'api/data';
 const form = document.querySelector('form');
 const graph = document.querySelector('.graph');
@@ -14,6 +14,7 @@ if (userID === null) {
         const response = await fetch(`${route}/getID`);
         userID = await response.text();
         localStorage.setItem('userID', userID);
+        console.log(userID);
     } catch (error) {
         alert(`Failed to get user ID from the server, error: ${error.message}`);
     }
