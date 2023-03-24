@@ -9,7 +9,7 @@ const loadingSpinner = graph.querySelector('#spinner');
 let userID = localStorage.getItem('userID');
 if (userID === null) {
     try {
-        const response = await fetch('http://localhost:3000/getID');
+        const response = await fetch(`${process.env.SERVER_URL}/getID`);
         userID = await response.text();
         localStorage.setItem('userID', userID);
     } catch (error) {
@@ -38,7 +38,7 @@ form.addEventListener('submit', async (event) => {
     if (descriptionTooltip) descriptionTooltip.remove();
     // Clear userData on the server to handle new request
     try {
-        const response = await fetch('http://localhost:3000/clear', {
+        const response = await fetch(`${process.env.SERVER_URL}/clear`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ async function crawlWebsite({ url, maxNodeCount = 5, baseGroup = 1 }) {
     loadingSpinner.classList.add('lds-roller');
     try {
         // Run crawler on the server
-        const response = await fetch('http://localhost:3000/crawl', {
+        const response = await fetch(`${process.env.SERVER_URL}/crawl`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
