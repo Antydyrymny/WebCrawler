@@ -1,6 +1,8 @@
 import { createGraph } from './graph.js';
 import { initialData } from './initialData.js';
 
+// const route = `http://localhost:3000`
+const route = 'api/data';
 const form = document.querySelector('form');
 const graph = document.querySelector('.graph');
 const svg = graph.querySelector('svg');
@@ -9,7 +11,7 @@ const loadingSpinner = graph.querySelector('#spinner');
 let userID = localStorage.getItem('userID');
 if (userID === null) {
     try {
-        const response = await fetch(`${process.env.SERVER_URL}/getID`);
+        const response = await fetch(`${route}/getID`);
         userID = await response.text();
         localStorage.setItem('userID', userID);
     } catch (error) {
@@ -38,7 +40,7 @@ form.addEventListener('submit', async (event) => {
     if (descriptionTooltip) descriptionTooltip.remove();
     // Clear userData on the server to handle new request
     try {
-        const response = await fetch(`${process.env.SERVER_URL}/clear`, {
+        const response = await fetch(`${route}/clear`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -63,7 +65,7 @@ async function crawlWebsite({ url, maxNodeCount = 5, baseGroup = 1 }) {
     loadingSpinner.classList.add('lds-roller');
     try {
         // Run crawler on the server
-        const response = await fetch(`${process.env.SERVER_URL}/crawl`, {
+        const response = await fetch(`${route}/crawl`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
