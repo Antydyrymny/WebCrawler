@@ -21,14 +21,14 @@ app.use('/api/getID', apiGetID);
 app.use('/api/crawl', apiCrawl);
 app.use('/api/clear', apiClear);
 
-// Serve static assets
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-app.use(express.static(path.join(__dirname, 'public')));
+// // Serve static assets
+// const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// app.use(express.static(path.join(__dirname, 'public')));
 
-// Route handler for the URL
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+// // Route handler for the URL
+// app.get('/', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// });
 
 // Start the server
 const port = process.env.PORT || 3000;
