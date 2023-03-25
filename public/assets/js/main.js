@@ -4,6 +4,7 @@ import { initialData } from './initialData.js';
 // const route = `https://graph-crawler.vercel.app/api/`;
 // const route = `http://localhost:3000/api`;
 const route = '/api';
+
 const form = document.querySelector('form');
 const graph = document.querySelector('.graph');
 const svg = graph.querySelector('svg');
