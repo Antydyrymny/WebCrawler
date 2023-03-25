@@ -2,8 +2,8 @@ import { createGraph } from './graph.js';
 import { initialData } from './initialData.js';
 
 // const route = `https://graph-crawler.vercel.app/api/`;
-// const route = `http://localhost:3000/api`;
-const route = '/api';
+const route = `http://localhost:3000/api`;
+// const route = '/api';
 const form = document.querySelector('form');
 const graph = document.querySelector('.graph');
 const svg = graph.querySelector('svg');
@@ -11,6 +11,7 @@ const loadingSpinner = graph.querySelector('#spinner');
 // Request the unique ID from the server to handle post requests
 let userID = localStorage.getItem('userID');
 userID = null;
+console.log(userID);
 if (userID === null) {
     try {
         const response = await fetch(`${route}/getID`);

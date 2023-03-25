@@ -8,8 +8,8 @@
         "node": "14.x"
     },
     "scripts": {
-        "start": "node assets/js/api/server.js",
-        "devStart": "nodemon assets/js/api/server.js",
+        "start": "node server.js",
+        "devStart": "nodemon server.js",
         "test": "node --experimental-vm-modules node_modules/jest/bin/jest"
     },
     "author": "Konstantin Danovich",

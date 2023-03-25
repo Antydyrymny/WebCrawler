@@ -2,7 +2,7 @@
     "version": 2,
     "builds": [
         {
-            "src": "/assets/js/api/server.js",
+            "src": "server.js",
             "use": "@vercel/node"
         }
     ],
@@ -10,7 +10,7 @@
         "directory": "public",
         "publicPath": "/public"
     },
-    "routes": [{ "src": "/(.*)", "dest": "/assets/js/api/server.js" }],
+    "routes": [{ "src": "/(.*)", "dest": "server.js" }],
     "headers": [
         {
             "source": "/api/(.*)",
