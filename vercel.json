@@ -19,33 +19,5 @@
             "src": "/(.*)",
             "dest": "public/index.html"
         }
-    ],
-    "headers": [
-        {
-            "source": "**/*.css",
-            "headers": [
-                {
-                    "key": "Content-Type",
-                    "value": "text/css"
-                },
-                {
-                    "key": "Vary",
-                    "value": "Accept-Encoding"
-                }
-            ]
-        },
-        {
-            "source": "**/*.js",
-            "headers": [
-                {
-                    "key": "Content-Type",
-                    "value": "application/javascript"
-                },
-                {
-                    "key": "Vary",
-                    "value": "Accept-Encoding"
-                }
-            ]
-        }
     ]
 }
