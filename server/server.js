@@ -7,7 +7,6 @@ import apiCrawl from './api/crawl.js';
 import apiClear from './api/clear.js';
 
 // Create app
-console.log('on the server');
 const app = express();
 
 // Middleware to parse JSON

@@ -12,7 +12,6 @@ const loadingSpinner = graph.querySelector('#spinner');
 // Request the unique ID from the server to handle post requests
 let userID = localStorage.getItem('userID');
 userID = null;
-console.log(userID);
 if (userID === null) {
     try {
         const response = await fetch(`${route}/getID`);
