@@ -4,9 +4,6 @@
     "type": "module",
     "description": "test project",
     "main": "server.js",
-    "engines": {
-        "node": "14.x"
-    },
     "scripts": {
         "start": "node server.js",
         "devStart": "nodemon server.js",
