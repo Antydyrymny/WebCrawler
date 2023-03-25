@@ -8,10 +8,34 @@
         {
             "src": "/public/**",
             "use": "@vercel/static",
-            "mime": {
-                "text/css": ["css"],
-                "application/javascript": ["js"]
-            }
+            "headers": [
+                {
+                    "source": "**/*.css",
+                    "headers": [
+                        {
+                            "key": "Content-Type",
+                            "value": "text/css"
+                        },
+                        {
+                            "key": "Vary",
+                            "value": "Accept-Encoding"
+                        }
+                    ]
+                },
+                {
+                    "source": "**/*.js",
+                    "headers": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/javascript"
+                        },
+                        {
+                            "key": "Vary",
+                            "value": "Accept-Encoding"
+                        }
+                    ]
+                }
+            ]
         }
     ],
     "routes": [
