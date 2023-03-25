@@ -9,7 +9,8 @@
     "rewrites": [
         {
             "source": "/(.*)",
-            "destination": "/server.js"
+            "destination": "/server.js",
+            "methods": ["GET", "POST", "PUT", "PATCH", "OPTIONS", "DELETE"]
         }
     ],
     "headers": [
