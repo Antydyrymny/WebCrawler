@@ -8,6 +8,21 @@
     ],
     "routes": [
         {
+            "src": "/api/getID",
+            "methods": ["OPTIONS"],
+            "dest": "return-204"
+        },
+        {
+            "src": "/api/clear",
+            "methods": ["OPTIONS"],
+            "dest": "return-204"
+        },
+        {
+            "src": "/api/crawl",
+            "methods": ["OPTIONS"],
+            "dest": "return-204"
+        },
+        {
             "src": "/(.*)",
             "dest": "/server.js",
             "methods": ["GET", "POST", "PUT", "PATCH", "OPTIONS", "DELETE"],
