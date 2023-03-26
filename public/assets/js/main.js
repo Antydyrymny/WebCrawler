@@ -10,18 +10,15 @@ const svg = graph.querySelector('svg');
 const loadingSpinner = graph.querySelector('#spinner');
 // Request the unique ID from the server to handle post requests
 let userID = localStorage.getItem('userID');
-userID = null;
 if (userID === null) {
     try {
         const response = await fetch(`${route}/getID`);
         userID = await response.text();
         localStorage.setItem('userID', userID);
-        console.log(userID);
     } catch (error) {
         alert(`Failed to get user ID from the server, error: ${error.message}`);
     }
 }
-console.log(userID);
 // After page is loaded
 // createGraph(initialData);
 // On form submit:
