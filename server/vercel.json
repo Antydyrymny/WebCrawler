@@ -10,17 +10,17 @@
         {
             "src": "/api/getID",
             "methods": ["OPTIONS"],
-            "dest": "return-204"
+            "dest": "return-200"
         },
         {
             "src": "/api/clear",
             "methods": ["OPTIONS"],
-            "dest": "return-204"
+            "dest": "return-200"
         },
         {
             "src": "/api/crawl",
             "methods": ["OPTIONS"],
-            "dest": "return-204"
+            "dest": "return-200"
         },
         {
             "src": "/(.*)",
