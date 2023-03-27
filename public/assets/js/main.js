@@ -1,10 +1,7 @@
 import { createGraph } from './graph.js';
 import { initialData } from './initialData.js';
-import dotenv from 'dotenv';
 
-dotenv.config();
-const route = process.env.route;
-// const route = `http://localhost:3000/api`;
+const route = `http://localhost:3000/api`;
 // const route = 'https://graph-crawler-server.vercel.app/api//api';
 
 const form = document.querySelector('form');
