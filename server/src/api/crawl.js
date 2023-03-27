@@ -1,6 +1,6 @@
 import express from 'express';
-import { crawler } from '../../public/assets/js/crawler.js';
-import { interpretData } from '../../public/assets/js/interpreter.js';
+import { crawler } from '../js/crawler.js';
+import { interpretData } from '../js/interpreter.js';
 import { userData } from './userData.js';
 
 const router = express.Router();
