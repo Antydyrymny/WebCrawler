@@ -19,8 +19,14 @@ if (userID === null) {
         alert(`Failed to get user ID from the server, error: ${error.message}`);
     }
 }
+// Before leaving the page
+window.addEventListener('unload', () => {
+    navigator.sendBeacon(`${route}/deleteID`, userID);
+});
+
 // After page is loaded
 // createGraph(initialData);
+
 // On form submit:
 form.addEventListener('submit', async (event) => {
     event.preventDefault();

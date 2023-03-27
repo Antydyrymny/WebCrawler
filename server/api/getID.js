@@ -8,5 +8,6 @@ const router = express.Router();
 export default router.get('/', (req, res) => {
     const uniqueId = uuidv4();
     userData.set(uniqueId, { explored: new Set(), addedNodes: new Set(), groups: [] });
+    console.log(userData);
     res.send(uniqueId);
 });

@@ -3,15 +3,18 @@ import dotenv from 'dotenv';
 // import path from 'path';
 // import { fileURLToPath } from 'url';
 import cors from 'cors';
+import bodyParser from 'body-parser';
 import apiGetID from './api/getID.js';
 import apiCrawl from './api/crawl.js';
 import apiClear from './api/clear.js';
+import apiDeleteID from './api/deleteID.js';
 
 // Create app
 const app = express();
 
-// Middleware to parse JSON
+// Middleware to parse JSON and FormData
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Enable CORS
 app.use(cors());
@@ -20,6 +23,8 @@ app.use(cors());
 app.use('/api/getID', apiGetID);
 app.use('/api/crawl', apiCrawl);
 app.use('/api/clear', apiClear);
+app.use('/api/deleteID', apiDeleteID);
+app.use('/api/healthz', (_, res) => res.send('working'));
 
 // // Serve static assets
 // const __dirname = path.dirname(fileURLToPath(import.meta.url));
