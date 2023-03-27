@@ -1,5 +1,6 @@
 import { InnerNode, OuterNode } from './siteNodes.js';
 import { JSDOM } from 'jsdom';
+const fetch = require('node-fetch');
 
 // Async breadth-first search, building a tree of links with a max number of links
 // takes in URL as string
