@@ -1,7 +1,6 @@
 {
     "name": "webcrawler",
     "version": "1.0.0",
-    "type": "module",
     "description": "test project",
     "main": "server.js",
     "scripts": {
