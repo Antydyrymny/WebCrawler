@@ -21,6 +21,7 @@ if (userID === null) {
 }
 // Before leaving the page
 window.addEventListener('unload', () => {
+    localStorage.removeItem('userID');
     navigator.sendBeacon(`${route}/deleteID`, userID);
 });
 
