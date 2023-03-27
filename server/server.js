@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 // import path from 'path';
 // import { fileURLToPath } from 'url';
 import cors from 'cors';
-import bodyParser from 'body-parser';
+// import bodyParser from 'body-parser';
 import apiGetID from './api/getID.js';
 import apiCrawl from './api/crawl.js';
 import apiClear from './api/clear.js';
@@ -14,7 +14,7 @@ const app = express();
 
 // Middleware to parse JSON and FormData
 app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.urlencoded({ extended: true }));
 
 // Enable CORS
 app.use(cors());
