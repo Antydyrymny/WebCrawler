@@ -1,8 +1,8 @@
 import { createGraph } from './graph.js';
 import { initialData } from './initialData.js';
 
-const route = `http://localhost:3000/api`;
-// const route = 'https://graph-crawler-server.onrender.com/api';
+// const route = `http://localhost:3000/api`;
+const route = 'https://graph-crawler-server.onrender.com/api';
 
 const form = document.querySelector('form');
 const graph = document.querySelector('.graph');
