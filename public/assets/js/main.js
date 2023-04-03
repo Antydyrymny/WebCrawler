@@ -71,6 +71,7 @@ form.addEventListener('submit', async (event) => {
 async function crawlWebsite({ url, maxNodeCount = 5, baseGroup = 1 }) {
     // Start the loading spinner
     loadingSpinner.classList.add('lds-roller');
+    form.query.disabled = true;
     try {
         // Run crawler on the server
         const response = await fetch(`${route}/crawl`, {
@@ -89,9 +90,11 @@ async function crawlWebsite({ url, maxNodeCount = 5, baseGroup = 1 }) {
         const graphData = await response.json();
         // Stop the loading spinner
         loadingSpinner.classList.remove('lds-roller');
+        form.query.disabled = false;
         return graphData;
     } catch (error) {
         loadingSpinner.classList.remove('lds-roller');
+        form.query.disabled = false;
         alert(error.message);
     }
 }
