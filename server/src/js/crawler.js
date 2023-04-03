@@ -6,7 +6,7 @@ const fetch = require('node-fetch');
 // takes in URL as string
 // returns the root InnerNode object with the map of website links
 async function crawler({ url: urlString, explored, maxNodeCount }) {
-    const urlObj = validateURL(urlString);
+    const urlObj = validateURL({ urlString });
     if (!urlObj) throw new Error('the URL is invalid');
     const treeRoot = new InnerNode(urlObj);
     const toVisit = [treeRoot];
@@ -38,28 +38,44 @@ async function crawler({ url: urlString, explored, maxNodeCount }) {
 }
 
 // Return URL object from valid urls, false otherwise
-function validateURL(urlString, origin = '', protocol = '') {
-    // const url = urlString[0] === '/' ? `${origin}${urlString}` : urlString;
-    let url = urlString;
-    // Relative link
-    if (url[0] === '/' && url[1] !== '/') url = `${origin}${urlString}`;
-    // Protocol relative link
-    else if (url.startsWith('//')) url = `${protocol}${urlString}`;
-    // Anchor, about:blank, mailto, tel, javascript executable link,
-    else if (
-        url.startsWith('#') ||
-        url.startsWith('about:blank') ||
-        url.startsWith('mailto') ||
-        url.startsWith('tel') ||
-        url.startsWith('javascript')
-    )
+function validateURL({ urlString, base, origin = '', pathname = '' }) {
+    if (!urlString) return false;
+    // Anchor, about:blank, mailto, tel, javascript executable link
+    if (
+        urlString.startsWith('#') ||
+        urlString.startsWith('about:blank') ||
+        urlString.startsWith('mailto') ||
+        urlString.startsWith('tel') ||
+        urlString.startsWith('javascript')
+    ) {
         return false;
+    }
+    // Absolute link or base
     try {
-        const urlObj = new URL(url);
-        return urlObj;
-    } catch (error) {
-        console.error(error.message);
-        return false;
+        return base ? new URL(urlString, base) : new URL(urlString);
+    } catch (errRelLink) {
+        // Relative link
+        try {
+            return new URL(urlString, `${origin}${pathname}`);
+        } catch (err) {
+            // Invalid link
+            console.error(err.message, `url: ${urlString}`, `base: ${base}`);
+            return false;
+        }
+    }
+}
+
+function validateBase({ base, origin, pathname }) {
+    try {
+        return new URL(base).href;
+    } catch (errRelLink) {
+        // Relative base
+        try {
+            return new URL(base, `${origin}${pathname}`);
+        } catch (errInvalidLink) {
+            // Invalid base
+            return false;
+        }
     }
 }
 
@@ -67,13 +83,13 @@ function validateURL(urlString, origin = '', protocol = '') {
 async function processUrl(urlObj) {
     const origin = urlObj.origin;
     const domain = urlObj.hostname;
-    const protocol = urlObj.protocol;
+    const pathname = urlObj.pathname;
     try {
         const response = await fetch(urlObj);
         if (!response.ok)
             throw new Error(`Request failed with status ${response.status}`);
         const html = await response.text();
-        return parseHTML(html, domain, origin, protocol);
+        return parseHTML(html, domain, origin, pathname);
     } catch (error) {
         console.error(error.message);
         return [];
@@ -81,7 +97,7 @@ async function processUrl(urlObj) {
 }
 
 // Build DOM of a site, get all URL
-function parseHTML(htmlString, domain, origin, protocol) {
+function parseHTML(htmlString, domain, origin, pathname) {
     const innerLinks = [];
     // Create a new JSDOM object
     const dom = new JSDOM(htmlString);
@@ -89,9 +105,19 @@ function parseHTML(htmlString, domain, origin, protocol) {
     const rootElement = dom.window.document;
     // Check for base tag for correct origin of relative links
     const base = rootElement.querySelector('base');
+    let baseLink = null;
+    if (base) {
+        baseLink = validateBase({ base: base.href, origin, pathname });
+    }
     const links = rootElement.querySelectorAll('a');
     links.forEach((link) => {
-        const urlObj = validateURL(link.href, base ? base.href : origin, protocol);
+        if (link.download) return;
+        const urlObj = validateURL({
+            urlString: link.href,
+            base: baseLink ? baseLink : undefined,
+            origin,
+            pathname,
+        });
         if (!urlObj) return;
         if (urlObj.hostname === domain) {
             innerLinks.push(new InnerNode(urlObj));
