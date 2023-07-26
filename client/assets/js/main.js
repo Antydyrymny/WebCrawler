@@ -3,7 +3,7 @@ import { initialData } from './initialData.js';
 
 // const route = `http://localhost:3000/api`;
 // const route = 'https://graph-crawler-server.onrender.com/api';
-const route = 'https://web-crawler-server.vercel.app/';
+const route = 'https://web-crawler-server.vercel.app/api';
 
 const form = document.querySelector('form');
 const graph = document.querySelector('.graph');
