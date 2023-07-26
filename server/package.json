@@ -1,10 +1,12 @@
 {
     "name": "webcrawler",
+    "type": "module",
     "version": "1.0.0",
     "description": "web crawler server",
     "main": "src/index.js",
     "scripts": {
         "dev": "nodemon --exec babel-node src/index.js",
+        "devStart": "nodemon src/index.js",
         "build": "babel src -d dist",
         "start": "node dist/index.js",
         "vercel-build": "echo hello",
