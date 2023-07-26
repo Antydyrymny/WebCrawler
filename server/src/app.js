@@ -17,7 +17,7 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
-app.use('/api', mainRouter);
+app.use('/', mainRouter);
 
 app.use(notFound);
 app.use(errorHandler);
