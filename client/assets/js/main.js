@@ -89,7 +89,6 @@ async function crawlWebsite({ url, maxNodeCount = 5, baseGroup = 1 }) {
         });
         // Get the data of links from server
         const graphData = await response.json();
-        console.log(graphData);
         // Stop the loading spinner
         loadingSpinner.classList.remove('lds-roller');
         form.query.disabled = false;

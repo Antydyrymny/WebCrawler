@@ -197,7 +197,12 @@ export function createGraph(
     // Define the crawling for new nodes on click function
     async function update(event, d) {
         // Check if alredy loading this site
-        if (currentlyLoading.has(d.id)) return;
+        if (currentlyLoading.has(d.id) || d.explored) {
+            // Restart the simulation
+            simulation.alpha(0.5).restart();
+            currentlyLoading.delete(d.id);
+            return;
+        }
         currentlyLoading.add(d.id);
         d.explored = true;
         // Get new nodes and links data
@@ -206,22 +211,27 @@ export function createGraph(
             maxNodeCount: 6,
             baseGroup: d.group,
         };
-        let newData = await crawlWebsite(settings);
 
-        // Remove root node from the data
-        newData.nodes.shift();
-        // Update data
-        data.nodes.push(...newData.nodes);
-        data.links.push(...newData.links);
+        try {
+            let newData = await crawlWebsite(settings);
 
-        // Update the simulation
-        simulation.stop();
-        simulation.nodes(data.nodes);
-        updateGraphVisuals();
+            // Remove root node from the data
+            newData.nodes.shift();
+            // Update data
+            data.nodes.push(...newData.nodes);
+            data.links.push(...newData.links);
 
-        // Restart the simulation
-        simulation.alpha(1).restart();
-        currentlyLoading.delete(d.id);
+            // Update the simulation
+            simulation.stop();
+            simulation.nodes(data.nodes);
+            updateGraphVisuals();
+        } catch (error) {
+            console.log(error);
+        } finally {
+            // Restart the simulation
+            simulation.alpha(1).restart();
+            currentlyLoading.delete(d.id);
+        }
     }
 
     // Define tooltip pointer event functions

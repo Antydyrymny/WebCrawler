@@ -17,6 +17,7 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
+app.get('/', (_, res) => res.send('working'));
 app.use('/', mainRouter);
 
 app.use(notFound);

@@ -11,6 +11,5 @@ router.use('/api/getID', apiGetID);
 router.use('/api/crawl', apiCrawl);
 router.use('/api/clear', apiClear);
 router.use('/api/deleteID', apiDeleteID);
-router.use('/api/healthz', (_, res) => res.send('working'));
 
 export default router;
