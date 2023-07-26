@@ -1,12 +1,12 @@
 {
     "name": "webcrawler",
     "version": "1.0.0",
-    "description": "test project",
-    "main": "server.js",
+    "description": "web crawler server",
+    "main": "index.js",
     "scripts": {
-        "dev": "nodemon --exec babel-node src/server.js",
+        "dev": "nodemon --exec babel-node src/index.js",
         "build": "babel src -d dist",
-        "start": "node dist/server.js",
+        "start": "node dist/index.js",
         "test": "node --experimental-vm-modules node_modules/jest/bin/jest"
     },
     "author": "Konstantin Danovich",
@@ -21,10 +21,13 @@
         "nodemon": "^2.0.21"
     },
     "dependencies": {
+        "body-parser": "^1.20.2",
         "cors": "^2.8.5",
         "dotenv": "^16.0.3",
         "express": "^4.18.2",
+        "helmet": "^7.0.0",
         "jsdom": "^21.1.0",
+        "morgan": "^1.10.0",
         "node-fetch": "^2.6.9",
         "uuid": "^9.0.0"
     }
