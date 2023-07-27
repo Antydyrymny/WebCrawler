@@ -5,16 +5,16 @@ export function interpretData({ treeRoot: tree, groups, baseGroup, addedNodes })
     let distanceGroups = [];
     // Uncheck the root node because it was already added before
     // but we still need to parse the tree starting from it
-    if (addedNodes.has(tree.url.href)) addedNodes.delete(tree.url.href);
+    if (tree.url.href in addedNodes) delete addedNodes[tree.url.href];
     recursiveParseTree(tree);
 
-    return { graphData: data, groupsUpd: groups, addedNodesUpd: addedNodes };
+    return { graphData: data, addedNodesUpdated: addedNodes, groupsUpdated: groups };
 
     function recursiveParseTree(tree) {
         const id = getId(tree.url);
         // Base case: already addedNodes
-        if (addedNodes.has(id)) return;
-        addedNodes.add(id);
+        if (id in addedNodes) return;
+        addedNodes[id] = true;
         // Base case: outer node
         if (!tree.inner) {
             let curGroup;

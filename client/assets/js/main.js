@@ -9,29 +9,18 @@ const form = document.querySelector('form');
 const graph = document.querySelector('.graph');
 const svg = graph.querySelector('svg');
 const loadingSpinner = graph.querySelector('#spinner');
-// Request the unique ID from the server to handle post requests
-let userID = localStorage.getItem('userID');
-if (userID === null) {
-    try {
-        const response = await fetch(`${route}/getID`);
-        userID = await response.text();
-        localStorage.setItem('userID', userID);
-    } catch (error) {
-        alert(`Failed to get user ID from the server, error: ${error.message}`);
-    }
-}
-// Before leaving the page
-window.addEventListener('unload', () => {
-    localStorage.removeItem('userID');
-    navigator.sendBeacon(`${route}/deleteID`, userID);
-});
+
+let crawlData = { explored: {}, addedNodes: {}, groups: [] };
 
 // After page is loaded
-createGraph(initialData);
+// createGraph(initialData);
 
 // On form submit:
 form.addEventListener('submit', async (event) => {
     event.preventDefault();
+    // Start the loading spinner
+    loadingSpinner.classList.add('lds-roller');
+    form.query.disabled = true;
     // Parse site to crawl
     const input = form.query.value;
     let targetSite;
@@ -47,32 +36,23 @@ form.addEventListener('submit', async (event) => {
     const descriptionTooltip = graph.querySelector('.tooltip-fullLink');
     if (tooltip) tooltip.remove();
     if (descriptionTooltip) descriptionTooltip.remove();
-    // Clear userData on the server to handle new request
-    try {
-        const response = await fetch(`${route}/clear`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                id: userID,
-            }),
-        });
-        if ((await response.text()) !== 'Clear successful')
-            throw new Error('Clear operation failed on the server');
-    } catch (error) {
-        console.error(error.message);
-    }
+    // Clear crawlData to handle new request
+    crawlData = { explored: {}, addedNodes: {}, groups: [] };
     // Get data from the server
-    const graphData = await crawlWebsite({ url: targetSite });
-    // Show svg element with graph
-    createGraph(graphData);
+    try {
+        const graphData = await crawlWebsite({ url: targetSite });
+        // Show svg element with graph
+        createGraph(graphData);
+    } catch (error) {
+        alert(error);
+    } finally {
+        // Stop the loading spinner
+        loadingSpinner.classList.remove('lds-roller');
+        form.query.disabled = false;
+    }
 });
 
 async function crawlWebsite({ url, maxNodeCount = 5, baseGroup = 1 }) {
-    // Start the loading spinner
-    loadingSpinner.classList.add('lds-roller');
-    form.query.disabled = true;
     try {
         // Run crawler on the server
         const response = await fetch(`${route}/crawl`, {
@@ -81,22 +61,25 @@ async function crawlWebsite({ url, maxNodeCount = 5, baseGroup = 1 }) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                id: userID,
                 url: `${url}`,
                 maxNodeCount: `${maxNodeCount}`,
                 baseGroup: `${baseGroup}`,
+                explored: crawlData.explored,
+                addedNodes: crawlData.addedNodes,
+                groups: crawlData.groups,
             }),
         });
-        // Get the data of links from server
-        const graphData = await response.json();
-        // Stop the loading spinner
-        loadingSpinner.classList.remove('lds-roller');
-        form.query.disabled = false;
+        // Get the data of links and updated crawlData from server
+        const { graphData, exploredUpdated, addedNodesUpdated, groupsUpdated } =
+            await response.json();
+        crawlData = {
+            explored: exploredUpdated,
+            addedNodes: addedNodesUpdated,
+            groups: groupsUpdated,
+        };
         return graphData;
     } catch (error) {
-        loadingSpinner.classList.remove('lds-roller');
-        form.query.disabled = false;
-        alert(error.message);
+        throw new Error(error.message);
     }
 }
 

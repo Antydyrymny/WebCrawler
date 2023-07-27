@@ -21,9 +21,8 @@ async function crawler({ url: urlString, explored, maxNodeCount }) {
         }
         const currentlyVisiting = toVisit.shift();
         // Base case: already explored or Outer node
-        if (explored.has(currentlyVisiting.url.href) || !currentlyVisiting.inner)
-            continue;
-        explored.add(currentlyVisiting.url.href);
+        if (currentlyVisiting.url.href in explored || !currentlyVisiting.inner) continue;
+        explored[currentlyVisiting.url.href] = true;
         currentlyVisiting.explored = true;
 
         // Process each site for links
