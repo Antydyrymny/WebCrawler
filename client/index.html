@@ -7,40 +7,137 @@
         <!-- CSS -->
         <link rel="stylesheet" href="./css/style.css" />
         <link rel="stylesheet" href="./css/spinner.css" />
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Montserrat&family=Roboto&display=swap"
+            rel="stylesheet"
+        />
         <!-- D3 CDN -->
         <script src="https://d3js.org/d3.v7.min.js"></script>
-        <title>Webcrawler with graph visualization</title>
+        <title>Web Graph</title>
     </head>
     <body>
-        <h1>Webcrawler with graph visualization</h1>
-        <article></article>
-        <div class="graph">
-            <div class="svg-wrapper">
-                <div id="spinner">
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
+        <div class="wrapper">
+            <div class="content">
+                <h1>Web crawler with graph visualization</h1>
+                <p class="subheading">
+                    Dynamically generating interactive website graphs using web crawling
+                    and D3.js visualization
+                </p>
+                <div class="graph">
+                    <div class="svg-wrapper">
+                        <div id="spinner">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                        <svg></svg>
+                    </div>
                 </div>
-                <svg></svg>
+                <div class="form-wrapper">
+                    <form id="webCrawlerQuerry">
+                        <label for="query"
+                            >Enter the site's address to build its graph</label
+                        ><br />
+                        <input
+                            type="text"
+                            id="query"
+                            name="query"
+                            placeholder="MDN.com"
+                            autocomplete="url"
+                        />
+                    </form>
+                </div>
+                <div class="examplesGallery">
+                    <div class="galleryItem" id="galleryItem1">
+                        <img src="./src/assets/images/github.jpg" alt="Github graph" />
+                    </div>
+                    <div class="galleryItem" id="galleryItem2">
+                        <img src="./src/assets/images/mdn.jpg" alt="MDN graph" />
+                    </div>
+                    <div class="galleryItem" id="galleryItem3">
+                        <img src="./src/assets/images/google.jpg" alt="Google graph" />
+                    </div>
+                </div>
+                <article>
+                    Title: Analyzing Website Structures and Interconnectivity using Web
+                    Crawling and D3.js Visualization Abstract: In this scientific work, we
+                    present a web-based platform that allows users to explore and
+                    visualize the intricate structures of websites through an interactive
+                    graph generated using D3.js. The platform utilizes a web crawler
+                    script, employing the breadth-first search algorithm to traverse
+                    websites efficiently and collect data about their interconnections.
+                    Nodes in the graph represent individual pages, while links between
+                    nodes signify their associations. This paper discusses the design and
+                    implementation of the platform, the challenges faced during its
+                    development, and limitations related to certain web technologies.
+                    Introduction The vastness and complexity of the internet necessitate
+                    innovative tools for analyzing and comprehending website structures.
+                    Our platform offers an intuitive and user-friendly interface for users
+                    to enter a domain, prompting the web crawler script to explore and map
+                    the entire website. The resulting interactive graph allows users to
+                    gain insights into the interconnectivity between pages and understand
+                    their relationships. 1.1 Functionality Overview Upon entering a
+                    domain, the web crawler starts with the root page and utilizes a
+                    breadth-first search algorithm to traverse the website in an efficient
+                    manner. As each page is visited, relevant information, such as page
+                    URLs and their associated links, is collected and stored in a graph
+                    data structure. This data is later processed and visualized using
+                    D3.js to create the interactive graph. Graph Visualization The
+                    interactive graph represents the website's structure, where nodes
+                    correspond to individual pages and links depict the connections
+                    between them. Each link is represented by an arrow, indicating the
+                    direction of the connection. Bi-directional links are highlighted in
+                    blue, signifying mutual associations between pages. Exploring Website
+                    Graphs Users can interact with the generated graph by clicking on
+                    individual nodes. This action triggers the web crawler to expand the
+                    graph further from the selected node, providing a more comprehensive
+                    representation of the website's structure. Examples of Website
+                    Analysis We present three case studies where popular websites were
+                    analyzed using our platform. By clicking on the respective website's
+                    image, users can view the graph representation of each site. The case
+                    studies demonstrate how our tool can effectively visualize the complex
+                    interconnections within different types of websites. Web Crawling and
+                    D3.js Implementation The web crawler employs a breadth-first search
+                    algorithm, which ensures that the platform traverses websites
+                    systematically, avoiding redundancy in data collection. URLs are
+                    standardized to prevent inconsistencies in the graph representation.
+                    However, certain web technologies, such as websites built with React,
+                    pose challenges for the web crawler due to the need for script
+                    execution to obtain complete data. Challenges and Solutions During the
+                    development of the platform, several challenges were encountered and
+                    addressed. Resolving links required careful handling of relative and
+                    absolute URLs to ensure accurate graph representation. Standardizing
+                    URLs involved considering multiple scenarios, such as handling HTTP
+                    and HTTPS versions of a website. To avoid downloading unnecessary
+                    data, the crawler was meticulously designed to focus solely on data
+                    collection, excluding media files and other non-essential content.
+                    Efficient memoization techniques were implemented to optimize the
+                    process of updating existing graphs when further exploration from a
+                    node is performed. Limitations and Future Work While our platform
+                    effectively maps traditional websites, websites built with modern web
+                    technologies like React remain a challenge due to the requirement for
+                    script execution. In the future, incorporating more advanced
+                    techniques for handling JavaScript-driven websites could improve the
+                    platform's versatility. Conclusion The web-based platform presented in
+                    this work provides an innovative approach to explore and understand
+                    the structural complexities of websites. By combining web crawling
+                    with D3.js visualization, users can gain valuable insights into the
+                    interconnected nature of online content. The challenges faced during
+                    the development process have been addressed, and future improvements
+                    hold promise for an even more comprehensive analysis of modern web
+                    structures.
+                </article>
             </div>
         </div>
-        <div class="form-wrapper">
-            <form id="webCrawlerQuerry">
-                <label for="query">Enter the site to explore</label><br />
-                <input
-                    type="text"
-                    name="query"
-                    placeholder="google.com"
-                    autocomplete="url"
-                />
-            </form>
-        </div>
         <!-- Main script -->
-        <script type="module" src="./assets/js/main.js"></script>
+        <script type="module" src="./src/js/main.js"></script>
     </body>
 </html>

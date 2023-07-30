@@ -1,16 +1,14 @@
 import { crawlWebsite } from './main.js';
 
-export function createGraph(
+export function createGraph({
     data,
-    graphParams = {
-        nodeSize: 5,
-        linkColor: '#999',
-        linkHightlightColor: 'black',
-        bidirectionalLinkColor: '#0442AA',
-        biLinkHightlightColor: '#055DF2',
-        initialScale: 1.5,
-    }
-) {
+    nodeSize = 5,
+    linkColor = '#999',
+    linkHightlightColor = 'black',
+    bidirectionalLinkColor = '#0442AA',
+    biLinkHightlightColor = '#055DF2',
+    initialScale = 1.5,
+}) {
     // Select SVG container
     const svg = d3.select('svg');
     // Get dimensions
@@ -22,8 +20,8 @@ export function createGraph(
     const zoomBehavior = d3.zoom().on('zoom', function (event) {
         svg.selectAll('g').attr('transform', event.transform);
     });
-    const zoomedCenterX = containerCenterX * graphParams.initialScale;
-    const zoomedCenterY = containerCenterY * graphParams.initialScale;
+    const zoomedCenterX = containerCenterX * initialScale;
+    const zoomedCenterY = containerCenterY * initialScale;
 
     // Enable zoom and panning
     svg.call(
@@ -38,7 +36,7 @@ export function createGraph(
     // Create the initial zoom and transform
     const initialTransform = d3.zoomIdentity
         .translate(containerCenterX - zoomedCenterX, containerCenterY - zoomedCenterY)
-        .scale(graphParams.initialScale);
+        .scale(initialScale);
 
     // Define the color scale for the groups
     const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
@@ -110,10 +108,12 @@ export function createGraph(
     let dragging = false;
     // Create the arrowhead markers
     createArrowhead();
-    createArrowhead(graphParams.linkHightlightColor);
+    createArrowhead(linkHightlightColor);
 
-    function createArrowhead(color = graphParams.linkColor) {
-        const namePostfix = color === graphParams.linkColor ? '' : color;
+    const scrollbarWidth = getScrollbarWidth();
+
+    function createArrowhead(color = linkColor) {
+        const namePostfix = color === linkColor ? '' : color;
         const arrowhead = svg
             .append('svg:defs')
             .append('svg:marker')
@@ -149,7 +149,7 @@ export function createGraph(
             .data(data.links, (d) => `${d.source.id}-${d.target.id}`)
             .enter()
             .append('line')
-            .attr('stroke', graphParams.linkColor)
+            .attr('stroke', linkColor)
             .attr('stroke-width', (d) => d.strength)
             .each(function (d) {
                 const link = d3.select(this);
@@ -159,10 +159,7 @@ export function createGraph(
                 if (reverseLink) {
                     d.bidirectional = true;
                     reverseLink.bidirectional = true;
-                    link.attr('stroke', graphParams.bidirectionalLinkColor).attr(
-                        'marker-end',
-                        ''
-                    );
+                    link.attr('stroke', bidirectionalLinkColor).attr('marker-end', '');
                 } else {
                     link.attr('marker-end', 'url(#arrowhead)');
                 }
@@ -177,7 +174,7 @@ export function createGraph(
             .enter()
             .append('circle')
             .attr('class', 'nodes')
-            .attr('r', graphParams.nodeSize)
+            .attr('r', nodeSize)
             .attr('stroke', 'black')
             .attr('stroke-width', '1px')
             .attr('fill', (d) => colorScale(d.group))
@@ -214,13 +211,11 @@ export function createGraph(
 
         try {
             let newData = await crawlWebsite(settings);
-
             // Remove root node from the data
             newData.nodes.shift();
             // Update data
             data.nodes.push(...newData.nodes);
             data.links.push(...newData.links);
-
             // Update the simulation
             simulation.stop();
             simulation.nodes(data.nodes);
@@ -256,25 +251,20 @@ export function createGraph(
                 .style('visibility', 'visible')
                 .style('top', event.clientY + 15 + 'px')
                 .style('left', event.clientX + 15 + 'px');
-            // Style full site link
             tooltipFullLink.textContent =
                 d.id.length < 75 ? d.id : d.id.slice(0, 75) + '...';
             tooltipFullLink.style.opacity = 1;
             // Style nodes
-            d3.select(this).attr('r', graphParams.nodeSize + 4.2);
+            d3.select(this).attr('r', nodeSize + 4.2);
             // Style related links
             const linksConnected = svg
                 .selectAll('line')
                 .filter((l) => l.target === d || l.source === d)
                 .attr('stroke', (l) =>
-                    l.bidirectional === true
-                        ? graphParams.biLinkHightlightColor
-                        : graphParams.linkHightlightColor
+                    l.bidirectional === true ? biLinkHightlightColor : linkHightlightColor
                 )
                 .attr('marker-end', (l) =>
-                    l.bidirectional
-                        ? ''
-                        : `url(#arrowhead${graphParams.linkHightlightColor})`
+                    l.bidirectional ? '' : `url(#arrowhead${linkHightlightColor})`
                 );
             svg.selectAll('circle')
                 .filter((c) =>
@@ -315,15 +305,11 @@ export function createGraph(
         tooltip.on('pointerover', tooltipStayOn);
         tooltip.on('pointerleave', tooltipLeave);
         // Remove styles from bottom tooltip, nodes and links
-        d3.select(binding ? binding : this).attr('r', graphParams.nodeSize);
+        d3.select(binding ? binding : this).attr('r', nodeSize);
         const linksConnected = svg
             .selectAll('line')
             .filter((l) => l.target.id === d.id || l.source.id === d.id)
-            .attr('stroke', (l) =>
-                l.bidirectional
-                    ? graphParams.bidirectionalLinkColor
-                    : graphParams.linkColor
-            )
+            .attr('stroke', (l) => (l.bidirectional ? bidirectionalLinkColor : linkColor))
             .attr('marker-end', (l) => (l.bidirectional ? '' : `url(#arrowhead)`));
         svg.selectAll('circle')
             .style('filter', 'brightness(100%)')
@@ -352,15 +338,12 @@ export function createGraph(
     function dragged(event, d) {
         d.fx = event.x;
         d.fy = event.y;
-        tooltipPointermove(event, d);
     }
     function dragEnded(event, d) {
         if (!event.active) simulation.alphaTarget(0);
         d.fx = null;
         d.fy = null;
         dragging = false;
-        const binding = this;
-        tooltipPointerleave(event, d, binding);
     }
 
     // Update the positions of the nodes and links on every tick of the simulation
@@ -383,4 +366,19 @@ export function createGraph(
             .attr('cx', (d) => d.x)
             .attr('cy', (d) => d.y);
     });
+}
+
+function getScrollbarWidth() {
+    const div = document.createElement('div');
+    div.style.width = '100px';
+    div.style.height = '100px';
+    div.style.overflow = 'scroll';
+    div.style.position = 'absolute';
+    div.style.top = '-1000px';
+
+    document.body.appendChild(div);
+    const scrollbarWidth = div.offsetWidth - div.clientWidth;
+    document.body.removeChild(div);
+
+    return scrollbarWidth;
 }

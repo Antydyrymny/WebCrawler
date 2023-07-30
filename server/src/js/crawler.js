@@ -22,6 +22,7 @@ async function crawler({ url: urlString, explored, maxNodeCount }) {
         const currentlyVisiting = toVisit.shift();
         // Base case: already explored or Outer node
         if (currentlyVisiting.url.href in explored || !currentlyVisiting.inner) continue;
+
         explored[currentlyVisiting.url.href] = true;
         currentlyVisiting.explored = true;
 
@@ -87,6 +88,7 @@ async function processUrl(urlObj) {
         if (!response.ok)
             throw new Error(`Request failed with status ${response.status}`);
         const html = await response.text();
+        console.log(html);
         return parseHTML(html, domain, origin, pathname);
     } catch (error) {
         console.error(error.message);
