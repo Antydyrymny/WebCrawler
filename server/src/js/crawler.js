@@ -7,9 +7,7 @@ import { JSDOM } from 'jsdom';
 async function crawler({ url: urlString, explored, maxNodeCount }) {
     const urlObj = validateURL({ urlString });
     if (!urlObj) throw new Error('URL is invalid');
-    const canonicalURL = await standardizeURL(urlObj);
-    if (!canonicalURL) throw new Error('URL is invalid');
-    const treeRoot = new InnerNode(canonicalURL);
+    const treeRoot = new InnerNode(urlObj);
     const toVisit = [treeRoot];
     let iterationCount = 0;
     // BFS
@@ -25,15 +23,20 @@ async function crawler({ url: urlString, explored, maxNodeCount }) {
         // Stop condition: already explored or Outer node
         if (currentlyVisiting.url.href in explored || !currentlyVisiting.inner) continue;
 
-        explored[currentlyVisiting.url.href] = true;
-        currentlyVisiting.explored = true;
-
         // Process each site for links
-        const containedNodes = await processURL(currentlyVisiting.url);
+        const containedNodes = await processURL(
+            currentlyVisiting.url,
+            currentlyVisiting,
+            explored
+        );
         containedNodes.forEach((node) => {
             currentlyVisiting.connect(node);
         });
         toVisit.push(...containedNodes);
+
+        // Mark as processed
+        explored[currentlyVisiting.url.href] = true;
+        currentlyVisiting.explored = true;
     }
     return { treeRoot, exploredUpdated: explored };
 }
@@ -81,20 +84,7 @@ function validateBase({ base, origin, pathname }) {
 }
 
 // Network requests
-async function standardizeURL(urlObj) {
-    // Make a head request to get page metadata with the canonical URL
-    try {
-        const response = await fetch(urlObj, {
-            method: 'HEAD',
-        });
-        return new URL(response.url);
-    } catch (error) {
-        console.error(error.message);
-        return false;
-    }
-}
-
-async function processURL(urlObj) {
+async function processURL(urlObj, currentlyVisiting, explored) {
     const origin = urlObj.origin;
     const domain = urlObj.hostname;
     const pathname = urlObj.pathname;
@@ -102,6 +92,9 @@ async function processURL(urlObj) {
         const response = await fetch(urlObj);
         if (!response.ok)
             throw new Error(`Request failed with status ${response.status}`);
+        const canonicalURL = response.url;
+        currentlyVisiting.url = canonicalURL;
+        if (canonicalURL in explored) return [];
         const html = await response.text();
         return await parseHTML(html, domain, origin, pathname);
     } catch (error) {
@@ -124,34 +117,19 @@ async function parseHTML(htmlString, domain, origin, pathname) {
         baseLink = validateBase({ base: base.href, origin, pathname });
     }
     const links = rootElement.querySelectorAll('a');
-    // links.forEach((link) => {
-    //     if (link.download) return;
-    //     const urlObj = validateURL({
-    //         urlString: link.href,
-    //         base: baseLink ? baseLink : undefined,
-    //         origin,
-    //         pathname,
-    //     });
-    //     if (!urlObj) return;
-    //     if (urlObj.hostname === domain) {
-    //         innerLinks.push(new InnerNode(urlObj));
-    //     } else innerLinks.push(new OuterNode(urlObj));
-    // });
-    for (const link of links) {
-        if (link.download) continue;
+    links.forEach((link) => {
+        if (link.download) return;
         const urlObj = validateURL({
             urlString: link.href,
             base: baseLink ? baseLink : undefined,
             origin,
             pathname,
         });
-        if (!urlObj) continue;
-        const canonicalURL = await standardizeURL(urlObj);
-        if (!canonicalURL) continue;
-        if (canonicalURL.hostname === domain) {
-            innerLinks.push(new InnerNode(canonicalURL));
-        } else innerLinks.push(new OuterNode(canonicalURL));
-    }
+        if (!urlObj) return;
+        if (urlObj.hostname === domain) {
+            innerLinks.push(new InnerNode(urlObj));
+        } else innerLinks.push(new OuterNode(urlObj));
+    });
     return innerLinks;
 }
 
