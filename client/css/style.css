@@ -1,6 +1,19 @@
 :root {
     --subheadingColor: rgba(0, 0, 0, 0.54);
     --mainBackgroundColor: rgb(248, 248, 246);
+    --mainTextColor: #000000CC;
+    --largeCodeBlocksColor: #333;
+    /* --largeCodeBlocksColor: #0451A5; */
+    --codeKeywordColor: #0000FF;
+    --codeVariableColor: #0451A5;
+    --codeFunctionColor: #795E26;
+    --codeStatementColor: #A31515;
+    --codeCommentColor: #008000;
+    --largeCodeBlocksBackground: #f8f8f8;
+    /* --largeCodeBlocksBackground: hsl(0, 0%, 11%); */
+    --smallCodeBlocksColor: #c7254e;
+    --smallCodeBlocksBackground: #f9f2f4;
+    --greyBordorColor: lightgray;
 }
 
 * {
@@ -23,21 +36,86 @@ body,
 .wrapper {
     display: flex;
     justify-content: center;
+    color: var(--mainTextColor);
+    font-size: 1.125rem;
 }
 
 .content {
     width: clamp(10rem, 70%, 55rem);
 }
 
-h1 {
+h1,
+h2 {
     text-align: left;
     font-family: 'Montserrat', sans-serif;
     font-weight: 400;
-    margin: 3rem 0 0.5rem 0
+}
+
+h1 {
+    margin-block: 2rem 0.5rem;
+}
+
+h2 {
+    font-size: 1.6875rem;
+    margin-block: 2rem 0.5rem;
+
+}
+
+p,
+li {
+    margin-bottom: 1rem;
+    line-height: 1.65;
+}
+
+pre code {
+    display: block;
+    white-space: pre;
+    padding: 0.5rem;
+    line-height: 1.6;
+    overflow-x: auto;
+    font-size: 0.875rem;
+    color: var(--largeCodeBlocksColor);
+    background: var(--largeCodeBlocksBackground);
+}
+
+code {
+    padding: 2px 4px;
+    border-radius: 4px;
+    color: var(--smallCodeBlocksColor);
+    background-color: var(--smallCodeBlocksBackground);
+    overflow-x: auto;
+    font-family: 'Source Code Pro',
+        monospace;
+}
+
+.keyword {
+    color: var(--codeKeywordColor);
+}
+
+.function {
+    color: var(--codeFunctionColor);
+}
+
+.variable {
+    color: var(--codeVariableColor);
+}
+
+.statement {
+    color: var(--codeStatementColor);
+}
+
+.comment {
+    color: var(--codeCommentColor);
+    font-style: italic;
+}
+
+ol {
+    padding-left: 3rem;
 }
 
 .subheading {
-    font-size: 1.125rem;
+    margin-top: 0;
+    font-size: 1.25rem;
     color: var(--subheadingColor)
 }
 
@@ -54,7 +132,7 @@ h1 {
 svg {
     width: 100%;
     height: 70vh;
-    border: 1px solid lightgray;
+    border: 1px solid var(--greyBordorColor);
     border-radius: 0.4rem;
 }
 
@@ -109,7 +187,7 @@ svg {
 }
 
 .form-wrapper {
-    margin-top: 1.5rem;
+    margin-top: 1.2rem;
     display: flex;
     justify-content: center;
 }
@@ -123,7 +201,12 @@ svg {
 }
 
 .form-wrapper input {
+    margin-top: 0.4rem;
     width: 100%;
+    height: 2.3rem;
+    padding-left: 0.5rem;
+    border: 1px solid var(--greyBordorColor);
+    border-radius: 0.2rem;
 }
 
 .examplesGallery {
@@ -162,5 +245,20 @@ svg {
 .examplesGallery img {
     max-width: 100%;
 }
+
+.noTopMargin {
+    margin-top: 0;
+}
+
+.myLink,
+.myLink:visited {
+    color: var(--smallCodeBlocksColor);
+    text-decoration: none;
+}
+
+.myLink:hover {
+    text-decoration: underline;
+}
+
 
 /* @media only screen and (max-width: 768px) {} */

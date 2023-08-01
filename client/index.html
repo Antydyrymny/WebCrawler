@@ -11,7 +11,7 @@
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
-            href="https://fonts.googleapis.com/css2?family=Montserrat&family=Roboto&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Montserrat&family=Roboto&family=Source+Code+Pro&display=swap"
             rel="stylesheet"
         />
         <!-- D3 CDN -->
@@ -26,7 +26,6 @@
                     Dynamically generating interactive website graphs using web crawling
                     and D3.js visualization
                 </p>
-                <br />
                 <div class="graph">
                     <div class="svg-wrapper">
                         <div id="spinner">
@@ -49,15 +48,16 @@
                 </div>
                 <div class="form-wrapper">
                     <div class="form-container">
-                        <form id="webCrawlerQuerry">
+                        <form action="" id="webCrawlerQuerry">
                             <div>
-                                <label for="query">Enter domain to build its graph</label
+                                <label for="query"
+                                    >Enter a URL or domain to build its graph:</label
                                 ><br />
                                 <input
                                     type="text"
                                     id="query"
                                     name="query"
-                                    placeholder="Like https://www.MDN.com or MDN.com"
+                                    placeholder="Example: https://www.example.com or example.com"
                                     autocomplete="url"
                                 />
                             </div>
@@ -107,34 +107,36 @@
                     </p>
                     <p>The code looks something like this:</p>
                     <pre>
-                        <code>
-                            <span class="opeartor">async function</span> <span class="name">crawler</span>({ url, explored, maxNodeCount }) {
-                                <span class="opeartor">if</span> (!<span class="name">validateURL</span>(url)) <span class="opeartor">throw</span> new Error('URL is invalid');
+<code>
+<span class="keyword">async function</span> <span class="function">crawler</span>(<span class="variable">url</span>, <span class="variable">explored</span>) {
+    <span class="statement">if</span> (!<span class="function">validateURL</span>(<span class="variable">url</span>)) <span class="statement">throw</span> <span class="keyword">new</span> Error('URL is invalid');
 
-                                const treeRoot = new InnerNode(url);
-                                const toVisit = [treeRoot];
+    <span class="comment">// Initialise map-like data structure to hold nodes and their connections</span>
+    <span class="keyword">const</span> <span class="variable">treeRoot</span> = <span class="keyword">new</span> InnerNode(<span class="variable">url</span>);
+    <span class="keyword">const</span> <span class="variable">toVisit</span> = [<span class="variable">treeRoot</span>];
 
-                                <span class="comment">// Breadth-first search</span>
-                                <span class="opeartor">while</span> (toVisit.length) {
-                                    const currentlyVisiting = toVisit.shift();
-                                    <span class="comment">// Stop condition: already explored or another domain</span>
-                                    <span class="opeartor">if</span> (explored.has(currentlyVisiting.url.href) || !currentlyVisiting.inner) <span class="opeartor">continue</span>;
+    <span class="comment">// Breadth-first search</span>
+    <span class="statement">while</span> (<span class="variable">toVisit</span>.length) {
+        <span class="keyword">const</span> <span class="variable">currentlyVisiting</span> = <span class="variable">toVisit</span>.<span class="function">shift</span>();
+        <span class="comment">// Additional stop condition - already explored or another domain</span>
+        <span class="statement">if</span> (<span class="variable">explored</span>.<span class="function">has</span>(<span class="variable">currentlyVisiting</span>.url.href) || !<span class="variable">currentlyVisiting</span>.inner) <span class="statement">continue</span>;
 
-                                    <span class="comment">// Process each site for links by building it's DOM</span>
-                                    const containedNodes = <span class="opeartor">await</span> <span class="name">processUrl</span>(currentlyVisiting.url);
-                                    containedNodes.forEach((node) => {
-                                        currentlyVisiting.connect(node);
-                                    });
-                                    toVisit.push(...containedNodes);
+        <span class="comment">// Process each site for links by building its DOM</span>
+        <span class="keyword">const</span> <span class="variable">containedNodes</span> = <span class="statement">await</span> <span class="function">processUrl</span>(<span class="variable">currentlyVisiting</span>.url);
+        <span class="variable">containedNodes</span>.<span class="function">forEach</span>((<span class="variable">node</span>) => {
+            <span class="variable">currentlyVisiting</span>.connect(<span class="variable">node</span>);
+        });
+        <span class="variable">toVisit</span>.<span class="function">push</span>(...<span class="variable">containedNodes</span>);
 
-                                    <span class="comment">//Mark as processed</span>
-                                    explored.add(currentlyVisiting.url.href);
-                                    currentlyVisiting.explored = true;
-                                }
-                                <span class="opeartor">return</span> { treeRoot, explored };
-                            }
-                        </code>
-                    </pre>
+        <span class="comment">// Mark as processed</span>
+        <span class="variable">explored</span>.<span class="function">add</span>(<span class="variable">currentlyVisiting</span>.url.href);
+        <span class="variable">currentlyVisiting</span>.explored = true;
+    }
+    <span class="statement">return</span> { <span class="variable">treeRoot</span>, <span class="variable">explored</span> };
+}
+</code>
+</pre>
+
                     <p>
                         As each page is visited, relevant information, such as page URLs
                         and their associated links, is collected and stored in a data
@@ -150,59 +152,41 @@
                     </p>
                     <ol>
                         <li>
-                            <b>Creating a simulation</b> from a collection of data with
-                            respective arrays <code>nodes</code> and
+                            <strong>Creating a simulation</strong> from a collection of
+                            data with respective arrays <code>nodes</code> and
                             <code>links</code> using D3.js methods
                             <code>d3.forceSimulation(data.nodes)</code>,
                         </li>
                         <li>
-                            <b>Adding desired forces</b> to it (fine-tuning strength
-                            coefficients of said forces to achieve the preferred look and
-                            feel of the graph proved to be a challenging process). The
-                            most notable forces used in this project are:
+                            <strong>Adding desired forces</strong> to it (fine-tuning
+                            strength coefficients of said forces to achieve the preferred
+                            look and feel of the graph proved to be a challenging
+                            process). The most notable forces used in this project are:
                             <code>'link'</code> - to connect the nodes,
                             <code>'charge'</code> - to make them repel from one another.
                             There are others to position the graph and make nodes of the
                             same domain stick closer to each other.
                         </li>
                         <li>
-                            <b>Visualizing nodes and links</b> by creating the
+                            <strong>Visualizing nodes and links</strong> by creating the
                             <code>'line'</code> and <code>'circle'</code> selections,
                             associating them with respective data, and representing them
-                            with SVG elements. For instance, code for creating a
+                            with SVG elements. Selections can later be updated when new
+                            nodes and links are added. For instance, code for creating a
                             <code>'line'</code> selection can look like this:
-                            <pre>
-                                <code>
-                                    let linkGroup = svg.select('g.links');
-                                    <span class="opeartor">if</span> (linkGroup.empty()) linkGroup = svg.append('g').attr('class', 'links');
-                                    const links = linkGroup.selectAll('line')
-                                        .data(data.links, (d) => `${d.source.id}-${d.target.id}`)
-                                        .enter()
-                                        .append('line')
-                                        .attr('stroke', linkColor)
-                                        .attr('stroke-width', (d) => d.strength)
-                                        <span class="comment">//Style the end of the line with an arrowhead with respective direction
-                                        //or color link separately if connection is in both directions</span>
-                                        .each(function (d) {
-                                            const link = d3.select(this);
-                                            const reverseLink = data.links.find(
-                                                (l) => l.source.id === d.target.id && l.target.id === d.source.id
-                                            );
-                                            <span class="opeartor">if</span> (reverseLink) {
-                                                d.bidirectional = true;
-                                                reverseLink.bidirectional = true;
-                                                link.attr('stroke', bidirectionalLinkColor).attr('marker-end', '');
-                                            } <span class="opeartor">else</span> {
-                                                link.attr('marker-end', 'url(#arrowhead)');
-                                            }
-                                        });
-                                </code>
-                            </pre>
-                            Selections can later be updated when new nodes and links are
-                            added.
                         </li>
                     </ol>
-                    <h2>Challenges and Limitations</h2>
+                    <pre>
+<code>
+<span class="keyword">const</span> <span class="variable">linkGroup</span> = <span class="variable">svg</span>.<span class="function">select</span>('g.links');
+<span class="statement">if</span> (<span class="variable">linkGroup</span>.<span class="function">empty</span>()) <span class="variable">linkGroup</span> = <span class="variable">svg</span>.<span class="function">append</span>('g').<span class="function">attr</span>('class', 'links');
+<span class="keyword">const</span> <span class="variable">links</span> = <span class="variable">linkGroup</span>.<span class="function">selectAll</span>('line')
+    .<span class="function">data</span>(<span class="variable">data</span>.links, (<span class="variable">d</span>) => `${<span class="variable">d</span>.source.id}-${<span class="variable">d</span>.target.id}`)
+    .<span class="function">enter</span>()
+    .<span class="function">append</span>('line')...<span class="comment">// Add arrowheads, styling, etc.</span>
+</code>
+</pre>
+                    <h2 class="noTopMargin">Challenges and Limitations</h2>
                     <p>
                         It is important to note that in this project, site connections are
                         found by extracting links from their HTML. While this approach
@@ -221,23 +205,40 @@
                         rather straightforward algorithm, there are still some caveats
                         that mostly come down to dealing with URLs.
                     </p>
-                    <p>
-                        Firstly, URLs need to be validated to ensure that the crawler
-                        identifies and collects only relevant links within websites.
-                        Non-website elements, such as email addresses, telephone numbers,
-                        script files, etc., need to be excluded. Additionally, resolving
-                        links can be tricky due to various link types, including absolute,
-                        relative, and those within the scope of the <code>base</code> tag,
-                        which can contain relative links themselves. It is important to
-                        also normalize URLs, as links on the pages can look different but
-                        lead to the same resource. All of these scenarios need to be
-                        accounted for.
-                    </p>
+                    <ol>
+                        <li>
+                            <strong>URLs need to be validated</strong> to ensure that the
+                            crawler identifies and collects only relevant links within
+                            websites. Non-website elements, such as email addresses,
+                            telephone numbers, script files, etc., need to be excluded.
+                        </li>
+                        <li>
+                            <strong>Resolving links</strong> can be tricky due to various
+                            link types, including absolute, relative, and those within the
+                            scope of the <code>base</code> tag, which can contain relative
+                            links themselves.
+                        </li>
+                        <li>
+                            <strong>URL normalization</strong> is also important because
+                            links on the pages can appear different but lead to the same
+                            resource. While it's possible to send a
+                            <code>HEAD</code> request to retrieve the final URL of each
+                            page, doing so for all nodes can be time-consuming, which may
+                            not be suitable for rendering graphs on the fly. Instead, I
+                            made the decision to normalize them on the server by removing
+                            trailing slashes, enforcing the protocol and subdomain,
+                            handling casing, and sorting query parameters. Accounting for
+                            all these scenarios, although it may not resolve cases where
+                            there is a redirect, still results in a quite consistent
+                            representation of URLs in the graph.
+                        </li>
+                    </ol>
                     <p>
                         In any case, it was an interesting side project to work on. If you
                         want to play with it, customize the look of the graph, or add some
                         functionality, you can find the project's source code on the
-                        <a href="https://github.com/Antydyrymny/WebCrawler">GitHub page</a
+                        <a class="myLink" href="https://github.com/Antydyrymny/WebCrawler"
+                            >GitHub page</a
                         >. Feel free to check it out and have some fun experimenting with
                         the web crawler and the graph!
                     </p>

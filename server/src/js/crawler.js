@@ -163,3 +163,6 @@ async function parseHTML(htmlString, domain, origin, pathname) {
 }
 
 export { crawler, validateURL, processURL, parseHTML };
+
+const a = new Map([1]);
+console.log(a);
