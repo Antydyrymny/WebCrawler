@@ -88,6 +88,10 @@ code {
         monospace;
 }
 
+.inlineCode {
+    word-wrap: break-word;
+}
+
 .keyword {
     color: var(--codeKeywordColor);
 }
@@ -261,4 +265,46 @@ svg {
 }
 
 
-/* @media only screen and (max-width: 768px) {} */
+@media (max-width: 1200px) {
+    svg {
+        height: 65vh;
+    }
+}
+
+@media (max-width: 970px) {
+    svg {
+        height: 60vh;
+    }
+
+    label {
+        font-size: 0.875rem;
+    }
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2rem;
+    }
+
+    ol {
+        padding-left: 1rem;
+    }
+
+    svg {
+        height: 56vh;
+    }
+
+    .examplesGallery {
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 500px) {
+    svg {
+        height: 40vh;
+    }
+
+    .examplesGallery {
+        gap: 0.1rem;
+    }
+}

@@ -153,27 +153,31 @@
                     <ol>
                         <li>
                             <strong>Creating a simulation</strong> from a collection of
-                            data with respective arrays <code>nodes</code> and
-                            <code>links</code> using D3.js methods
-                            <code>d3.forceSimulation(data.nodes)</code>,
+                            data with respective arrays
+                            <code class="inlineCode">nodes</code> and
+                            <code class="inlineCode">links</code> using D3.js methods
+                            <code class="inlineCode">d3.forceSimulation(data.nodes)</code
+                            >,
                         </li>
                         <li>
                             <strong>Adding desired forces</strong> to it (fine-tuning
                             strength coefficients of said forces to achieve the preferred
                             look and feel of the graph proved to be a challenging
                             process). The most notable forces used in this project are:
-                            <code>'link'</code> - to connect the nodes,
-                            <code>'charge'</code> - to make them repel from one another.
-                            There are others to position the graph and make nodes of the
-                            same domain stick closer to each other.
+                            <code class="inlineCode">'link'</code> - to connect the nodes,
+                            <code class="inlineCode">'charge'</code> - to make them repel
+                            from one another. There are others to position the graph and
+                            make nodes of the same domain stick closer to each other.
                         </li>
                         <li>
                             <strong>Visualizing nodes and links</strong> by creating the
-                            <code>'line'</code> and <code>'circle'</code> selections,
+                            <code class="inlineCode">'line'</code> and
+                            <code class="inlineCode">'circle'</code> selections,
                             associating them with respective data, and representing them
                             with SVG elements. Selections can later be updated when new
                             nodes and links are added. For instance, code for creating a
-                            <code>'line'</code> selection can look like this:
+                            <code class="inlineCode">'line'</code> selection can look like
+                            this:
                         </li>
                     </ol>
                     <pre>
@@ -215,22 +219,22 @@
                         <li>
                             <strong>Resolving links</strong> can be tricky due to various
                             link types, including absolute, relative, and those within the
-                            scope of the <code>base</code> tag, which can contain relative
-                            links themselves.
+                            scope of the <code class="inlineCode">base</code> tag, which
+                            can contain relative links themselves.
                         </li>
                         <li>
                             <strong>URL normalization</strong> is also important because
                             links on the pages can appear different but lead to the same
                             resource. While it's possible to send a
-                            <code>HEAD</code> request to retrieve the final URL of each
-                            page, doing so for all nodes can be time-consuming, which may
-                            not be suitable for rendering graphs on the fly. Instead, I
-                            made the decision to normalize them on the server by removing
-                            trailing slashes, enforcing the protocol and subdomain,
-                            handling casing, and sorting query parameters. Accounting for
-                            all these scenarios, although it may not resolve cases where
-                            there is a redirect, still results in a quite consistent
-                            representation of URLs in the graph.
+                            <code class="inlineCode">HEAD</code> request to retrieve the
+                            final URL of each page, doing so for all nodes can be
+                            time-consuming, which may not be suitable for rendering graphs
+                            on the fly. Instead, I made the decision to normalize them on
+                            the server by removing trailing slashes, enforcing the
+                            protocol and subdomain, handling casing, and sorting query
+                            parameters. Accounting for all these scenarios, although it
+                            may not resolve cases where there is a redirect, still results
+                            in a quite consistent representation of URLs in the graph.
                         </li>
                     </ol>
                     <p>
