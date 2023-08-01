@@ -120,16 +120,16 @@
                                     <span class="comment">// Stop condition: already explored or another domain</span>
                                     <span class="opeartor">if</span> (explored.has(currentlyVisiting.url.href) || !currentlyVisiting.inner) <span class="opeartor">continue</span>;
 
-                                    <span class="comment">//Remember that we visited the nodes</span>
-                                    explored.add(currentlyVisiting.url.href);
-                                    currentlyVisiting.explored = true;
-
                                     <span class="comment">// Process each site for links by building it's DOM</span>
                                     const containedNodes = <span class="opeartor">await</span> <span class="name">processUrl</span>(currentlyVisiting.url);
                                     containedNodes.forEach((node) => {
                                         currentlyVisiting.connect(node);
                                     });
                                     toVisit.push(...containedNodes);
+
+                                    <span class="comment">//Mark as processed</span>
+                                    explored.add(currentlyVisiting.url.href);
+                                    currentlyVisiting.explored = true;
                                 }
                                 <span class="opeartor">return</span> { treeRoot, explored };
                             }
@@ -205,15 +205,16 @@
                     <h2>Challenges and Limitations</h2>
                     <p>
                         It is important to note that in this project, site connections are
-                        found by extracting links from their HTML and such approach, even
-                        though it works in many cases, will not suffice for pages that
-                        load content dynamically, and most projects using frameworks like
-                        React or Angular do so. To properly crawl JavaScript-generated
-                        websites it would require to execute all of the page's scripts and
-                        generate its HTML. That can be done with a headless browser, but
-                        such process is more computationally intensive and, perhaps,
-                        unsuit for rendering graphs dynamically. So crawling such websites
-                        is out of scope of this project.
+                        found by extracting links from their HTML. While this approach
+                        works in many cases, it may not suffice for pages that load
+                        content dynamically, especially those utilizing frameworks like
+                        React or Angular. To properly crawl JavaScript-generated websites,
+                        it would require executing all of the page's scripts and
+                        generating its HTML. This can be achieved with a headless browser,
+                        but such a process is more computationally intensive and may not
+                        be suitable for rendering graphs dynamically. Therefore, crawling
+                        such websites falls outside the scope of this project, which
+                        focuses on exploring static HTML-based websites.
                     </p>
                     <p>
                         Even without scraping JavaScript-generated websites, and using a
@@ -221,23 +222,24 @@
                         that mostly come down to dealing with URLs.
                     </p>
                     <p>
-                        Firstly, URLs needs to be validated to ensure that the crawler
+                        Firstly, URLs need to be validated to ensure that the crawler
                         identifies and collects only relevant links within websites.
-                        Non-website elements need to be excluded, such as email addresses,
-                        telephone numbers script files, etc. Additionally, resolving links
-                        can be tricky due to various link types, including absolute,
+                        Non-website elements, such as email addresses, telephone numbers,
+                        script files, etc., need to be excluded. Additionally, resolving
+                        links can be tricky due to various link types, including absolute,
                         relative, and those within the scope of the <code>base</code> tag,
-                        which can contain relative links themselves. All of those
-                        scenarious needs to be accounted for.
+                        which can contain relative links themselves. It is important to
+                        also normalize URLs, as links on the pages can look different but
+                        lead to the same resource. All of these scenarios need to be
+                        accounted for.
                     </p>
                     <p>
-                        Another thing to note To improve efficiency and user experience,
-                        it is important to save memoized data about explored links. This
-                        allows the crawler to recall previously visited pages, avoiding
-                        redundant explorations when users decide to map the graph further
-                        or revisit the same domain. Efficient memoization helps reduce
-                        redundant HTTP requests and speeds up the graph exploration
-                        process.
+                        In any case, it was an interesting side project to work on. If you
+                        want to play with it, customize the look of the graph, or add some
+                        functionality, you can find the project's source code on the
+                        <a href="https://github.com/Antydyrymny/WebCrawler">GitHub page</a
+                        >. Feel free to check it out and have some fun experimenting with
+                        the web crawler and the graph!
                     </p>
                 </article>
             </div>

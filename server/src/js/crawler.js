@@ -7,6 +7,12 @@ import { JSDOM } from 'jsdom';
 async function crawler({ url: urlString, explored, maxNodeCount }) {
     const urlObj = validateURL({ urlString });
     if (!urlObj) throw new Error('URL is invalid');
+    // Check that head node can be fetched
+    try {
+        await fetch(urlObj, { method: 'HEAD' });
+    } catch (error) {
+        throw new Error('Unable to fetch head URL');
+    }
     const treeRoot = new InnerNode(urlObj);
     const toVisit = [treeRoot];
     let iterationCount = 0;
@@ -24,11 +30,7 @@ async function crawler({ url: urlString, explored, maxNodeCount }) {
         if (currentlyVisiting.url.href in explored || !currentlyVisiting.inner) continue;
 
         // Process each site for links
-        const containedNodes = await processURL(
-            currentlyVisiting.url,
-            currentlyVisiting,
-            explored
-        );
+        const containedNodes = await processURL(currentlyVisiting.url);
         containedNodes.forEach((node) => {
             currentlyVisiting.connect(node);
         });
@@ -56,11 +58,15 @@ function validateURL({ urlString, base, origin = '', pathname = '' }) {
     }
     // Absolute link or base
     try {
-        return base ? new URL(urlString, base) : new URL(urlString);
+        const validURL = base ? new URL(urlString, base) : new URL(urlString);
+        // return validURL;
+        return normalizeURL(validURL);
     } catch (errRelLink) {
         // Relative link
         try {
-            return new URL(urlString, `${origin}${pathname}`);
+            const validURL = new URL(urlString, `${origin}${pathname}`);
+            return validURL;
+            // return normalizeURL(validURL);
         } catch (err) {
             // Invalid link
             console.error(err.message, `url: ${urlString}`, `base: ${base}`);
@@ -83,8 +89,34 @@ function validateBase({ base, origin, pathname }) {
     }
 }
 
+function normalizeURL(urlObj) {
+    // Remove trailing slashes
+    const path = urlObj.pathname.replace(/\/$/, '');
+    // Handle protocol
+    const protocol = urlObj.protocol === '' ? 'https:' : urlObj.protocol;
+    // Handle subdomain
+    const domain = urlObj.hostname.startsWith('www.')
+        ? urlObj.hostname
+        : 'www.' + urlObj.hostname;
+    // Convert to lowercase
+    const lowerCasePath = path.toLowerCase();
+    // Sort query parameters
+    const searchParams = urlObj.searchParams;
+    const queryArray = [];
+    for (let query of searchParams.keys()) {
+        queryArray.push(query);
+    }
+    queryArray.sort().map((query) => `${query}=${searchParams.get(query)}`);
+    const sortedQuery = queryArray.join('&');
+    // Encode
+    const encodedQuery = encodeURIComponent(sortedQuery);
+    // Canonize
+    const normalizedURLstring = `${protocol}//${domain}${lowerCasePath}?${encodedQuery}`;
+    return new URL(normalizedURLstring);
+}
+
 // Network requests
-async function processURL(urlObj, currentlyVisiting, explored) {
+async function processURL(urlObj) {
     const origin = urlObj.origin;
     const domain = urlObj.hostname;
     const pathname = urlObj.pathname;
@@ -92,9 +124,6 @@ async function processURL(urlObj, currentlyVisiting, explored) {
         const response = await fetch(urlObj);
         if (!response.ok)
             throw new Error(`Request failed with status ${response.status}`);
-        const canonicalURL = response.url;
-        currentlyVisiting.url = canonicalURL;
-        if (canonicalURL in explored) return [];
         const html = await response.text();
         return await parseHTML(html, domain, origin, pathname);
     } catch (error) {

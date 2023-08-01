@@ -63,7 +63,7 @@ form.addEventListener('submit', async (event) => {
         // Show svg element with graph
         createGraph({ data: graphData });
     } catch (error) {
-        alert(error);
+        showErrorMessage(error.message);
     }
     // Loading spinner will be stoped in crawlWebsite
 });
@@ -97,8 +97,11 @@ async function crawlWebsite({ url, maxNodeCount = 5, baseGroup = 1 }) {
             }),
         });
         // Get the data of links and updated crawlData from server
-        const { graphData, exploredUpdated, addedNodesUpdated, groupsUpdated } =
-            await response.json();
+        const result = await response.json();
+        if (result.error && result.error === 'Unable to fetch URL') {
+            throw new Error('Unable to fetch URL');
+        }
+        const { graphData, exploredUpdated, addedNodesUpdated, groupsUpdated } = result;
         crawlData = {
             explored: exploredUpdated,
             addedNodes: addedNodesUpdated,
@@ -112,6 +115,19 @@ async function crawlWebsite({ url, maxNodeCount = 5, baseGroup = 1 }) {
         loadingSpinner.classList.remove('lds-roller');
         form.query.disabled = false;
     }
+}
+
+function showErrorMessage(message) {
+    // Create a new text element
+    const errorMessage = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    // Set attributes for centering the text
+    errorMessage.setAttribute('x', '50%');
+    errorMessage.setAttribute('y', '50%');
+    errorMessage.setAttribute('text-anchor', 'middle');
+    errorMessage.setAttribute('dominant-baseline', 'middle');
+    errorMessage.textContent = message;
+    // Append the text element to the SVG
+    svg.appendChild(errorMessage);
 }
 
 export { crawlWebsite };

@@ -28,6 +28,8 @@ export default router.post('/', async (req, res) => {
             groupsUpdated,
         });
     } catch (error) {
-        res.status(500).json(error);
+        if (error.message === 'Unable to fetch head URL') {
+            res.json({ error: 'Unable to fetch URL' });
+        } else res.status(500).json(error);
     }
 });

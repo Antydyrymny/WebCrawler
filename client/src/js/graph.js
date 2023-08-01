@@ -195,9 +195,7 @@ export function createGraph({
     async function update(event, d) {
         // Check if alredy loading this site
         if (currentlyLoading.has(d.id) || d.explored) {
-            // Restart the simulation
-            simulation.alpha(0.5).restart();
-            currentlyLoading.delete(d.id);
+            restartSimulation(0.5);
             return;
         }
         currentlyLoading.add(d.id);
@@ -221,10 +219,14 @@ export function createGraph({
             simulation.nodes(data.nodes);
             updateGraphVisuals();
         } catch (error) {
-            console.log(error);
+            if (error.message === 'Unable to fetch URL') restartSimulation(0.5);
+            else console.log(error);
         } finally {
-            // Restart the simulation
-            simulation.alpha(1).restart();
+            restartSimulation();
+        }
+
+        function restartSimulation(alpha = 1) {
+            simulation.alpha(alpha).restart();
             currentlyLoading.delete(d.id);
         }
     }
