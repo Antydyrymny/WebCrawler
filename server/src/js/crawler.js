@@ -6,8 +6,10 @@ import { JSDOM } from 'jsdom';
 // returns the root InnerNode object with the map of website links
 async function crawler({ url: urlString, explored, maxNodeCount }) {
     const urlObj = validateURL({ urlString });
-    if (!urlObj) throw new Error('the URL is invalid');
-    const treeRoot = new InnerNode(urlObj);
+    if (!urlObj) throw new Error('URL is invalid');
+    const canonicalURL = await standardizeURL(urlObj);
+    if (!canonicalURL) throw new Error('URL is invalid');
+    const treeRoot = new InnerNode(canonicalURL);
     const toVisit = [treeRoot];
     let iterationCount = 0;
     // BFS
@@ -20,20 +22,20 @@ async function crawler({ url: urlString, explored, maxNodeCount }) {
             break;
         }
         const currentlyVisiting = toVisit.shift();
-        // Base case: already explored or Outer node
+        // Stop condition: already explored or Outer node
         if (currentlyVisiting.url.href in explored || !currentlyVisiting.inner) continue;
 
         explored[currentlyVisiting.url.href] = true;
         currentlyVisiting.explored = true;
 
         // Process each site for links
-        const containedNodes = await processUrl(currentlyVisiting.url);
+        const containedNodes = await processURL(currentlyVisiting.url);
         containedNodes.forEach((node) => {
             currentlyVisiting.connect(node);
         });
         toVisit.push(...containedNodes);
     }
-    return { treeRoot: treeRoot, exploredUpdated: explored };
+    return { treeRoot, exploredUpdated: explored };
 }
 
 // Return URL object from valid urls, false otherwise
@@ -79,7 +81,20 @@ function validateBase({ base, origin, pathname }) {
 }
 
 // Network requests
-async function processUrl(urlObj) {
+async function standardizeURL(urlObj) {
+    // Make a head request to get page metadata with the canonical URL
+    try {
+        const response = await fetch(urlObj, {
+            method: 'HEAD',
+        });
+        return new URL(response.url);
+    } catch (error) {
+        console.error(error.message);
+        return false;
+    }
+}
+
+async function processURL(urlObj) {
     const origin = urlObj.origin;
     const domain = urlObj.hostname;
     const pathname = urlObj.pathname;
@@ -88,8 +103,7 @@ async function processUrl(urlObj) {
         if (!response.ok)
             throw new Error(`Request failed with status ${response.status}`);
         const html = await response.text();
-        console.log(html);
-        return parseHTML(html, domain, origin, pathname);
+        return await parseHTML(html, domain, origin, pathname);
     } catch (error) {
         console.error(error.message);
         return [];
@@ -97,7 +111,7 @@ async function processUrl(urlObj) {
 }
 
 // Build DOM of a site, get all URL
-function parseHTML(htmlString, domain, origin, pathname) {
+async function parseHTML(htmlString, domain, origin, pathname) {
     const innerLinks = [];
     // Create a new JSDOM object
     const dom = new JSDOM(htmlString);
@@ -110,20 +124,35 @@ function parseHTML(htmlString, domain, origin, pathname) {
         baseLink = validateBase({ base: base.href, origin, pathname });
     }
     const links = rootElement.querySelectorAll('a');
-    links.forEach((link) => {
-        if (link.download) return;
+    // links.forEach((link) => {
+    //     if (link.download) return;
+    //     const urlObj = validateURL({
+    //         urlString: link.href,
+    //         base: baseLink ? baseLink : undefined,
+    //         origin,
+    //         pathname,
+    //     });
+    //     if (!urlObj) return;
+    //     if (urlObj.hostname === domain) {
+    //         innerLinks.push(new InnerNode(urlObj));
+    //     } else innerLinks.push(new OuterNode(urlObj));
+    // });
+    for (const link of links) {
+        if (link.download) continue;
         const urlObj = validateURL({
             urlString: link.href,
             base: baseLink ? baseLink : undefined,
             origin,
             pathname,
         });
-        if (!urlObj) return;
-        if (urlObj.hostname === domain) {
-            innerLinks.push(new InnerNode(urlObj));
-        } else innerLinks.push(new OuterNode(urlObj));
-    });
+        if (!urlObj) continue;
+        const canonicalURL = await standardizeURL(urlObj);
+        if (!canonicalURL) continue;
+        if (canonicalURL.hostname === domain) {
+            innerLinks.push(new InnerNode(canonicalURL));
+        } else innerLinks.push(new OuterNode(canonicalURL));
+    }
     return innerLinks;
 }
 
-export { crawler, validateURL, processUrl, parseHTML };
+export { crawler, validateURL, processURL, parseHTML };

@@ -246,7 +246,12 @@ export function createGraph({
             // Style tooltip
             tooltip
                 .html(
-                    `<a href="${d.id}">${content.origin}${content.pathname}</a>${clickMe}`
+                    `<a href="${d.id}">${content.origin}${content.pathname}${
+                        content.origin.length + content.pathname.length ===
+                        content.href.length
+                            ? ''
+                            : '...'
+                    }</a>${clickMe}`
                 )
                 .style('visibility', 'visible')
                 .style('top', event.clientY + 15 + 'px')

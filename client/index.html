@@ -26,6 +26,7 @@
                     Dynamically generating interactive website graphs using web crawling
                     and D3.js visualization
                 </p>
+                <br />
                 <div class="graph">
                     <div class="svg-wrapper">
                         <div id="spinner">
@@ -41,19 +42,27 @@
                         <svg></svg>
                     </div>
                 </div>
+                <div class="description graphDescription">
+                    *Click on a node to further map the graph <br />
+                    **Arrows show the direction of connection, two-ways connections are
+                    shown as blue lines
+                </div>
                 <div class="form-wrapper">
-                    <form id="webCrawlerQuerry">
-                        <label for="query"
-                            >Enter the site's address to build its graph</label
-                        ><br />
-                        <input
-                            type="text"
-                            id="query"
-                            name="query"
-                            placeholder="MDN.com"
-                            autocomplete="url"
-                        />
-                    </form>
+                    <div class="form-container">
+                        <form id="webCrawlerQuerry">
+                            <div>
+                                <label for="query">Enter domain to build its graph</label
+                                ><br />
+                                <input
+                                    type="text"
+                                    id="query"
+                                    name="query"
+                                    placeholder="Like https://www.MDN.com or MDN.com"
+                                    autocomplete="url"
+                                />
+                            </div>
+                        </form>
+                    </div>
                 </div>
                 <div class="examplesGallery">
                     <div class="galleryItem" id="galleryItem1">
@@ -66,74 +75,170 @@
                         <img src="./src/assets/images/google.jpg" alt="Google graph" />
                     </div>
                 </div>
+                <div class="description exampleDescription">
+                    *Some example graphs, click to load
+                </div>
                 <article>
-                    Title: Analyzing Website Structures and Interconnectivity using Web
-                    Crawling and D3.js Visualization Abstract: In this scientific work, we
-                    present a web-based platform that allows users to explore and
-                    visualize the intricate structures of websites through an interactive
-                    graph generated using D3.js. The platform utilizes a web crawler
-                    script, employing the breadth-first search algorithm to traverse
-                    websites efficiently and collect data about their interconnections.
-                    Nodes in the graph represent individual pages, while links between
-                    nodes signify their associations. This paper discusses the design and
-                    implementation of the platform, the challenges faced during its
-                    development, and limitations related to certain web technologies.
-                    Introduction The vastness and complexity of the internet necessitate
-                    innovative tools for analyzing and comprehending website structures.
-                    Our platform offers an intuitive and user-friendly interface for users
-                    to enter a domain, prompting the web crawler script to explore and map
-                    the entire website. The resulting interactive graph allows users to
-                    gain insights into the interconnectivity between pages and understand
-                    their relationships. 1.1 Functionality Overview Upon entering a
-                    domain, the web crawler starts with the root page and utilizes a
-                    breadth-first search algorithm to traverse the website in an efficient
-                    manner. As each page is visited, relevant information, such as page
-                    URLs and their associated links, is collected and stored in a graph
-                    data structure. This data is later processed and visualized using
-                    D3.js to create the interactive graph. Graph Visualization The
-                    interactive graph represents the website's structure, where nodes
-                    correspond to individual pages and links depict the connections
-                    between them. Each link is represented by an arrow, indicating the
-                    direction of the connection. Bi-directional links are highlighted in
-                    blue, signifying mutual associations between pages. Exploring Website
-                    Graphs Users can interact with the generated graph by clicking on
-                    individual nodes. This action triggers the web crawler to expand the
-                    graph further from the selected node, providing a more comprehensive
-                    representation of the website's structure. Examples of Website
-                    Analysis We present three case studies where popular websites were
-                    analyzed using our platform. By clicking on the respective website's
-                    image, users can view the graph representation of each site. The case
-                    studies demonstrate how our tool can effectively visualize the complex
-                    interconnections within different types of websites. Web Crawling and
-                    D3.js Implementation The web crawler employs a breadth-first search
-                    algorithm, which ensures that the platform traverses websites
-                    systematically, avoiding redundancy in data collection. URLs are
-                    standardized to prevent inconsistencies in the graph representation.
-                    However, certain web technologies, such as websites built with React,
-                    pose challenges for the web crawler due to the need for script
-                    execution to obtain complete data. Challenges and Solutions During the
-                    development of the platform, several challenges were encountered and
-                    addressed. Resolving links required careful handling of relative and
-                    absolute URLs to ensure accurate graph representation. Standardizing
-                    URLs involved considering multiple scenarios, such as handling HTTP
-                    and HTTPS versions of a website. To avoid downloading unnecessary
-                    data, the crawler was meticulously designed to focus solely on data
-                    collection, excluding media files and other non-essential content.
-                    Efficient memoization techniques were implemented to optimize the
-                    process of updating existing graphs when further exploration from a
-                    node is performed. Limitations and Future Work While our platform
-                    effectively maps traditional websites, websites built with modern web
-                    technologies like React remain a challenge due to the requirement for
-                    script execution. In the future, incorporating more advanced
-                    techniques for handling JavaScript-driven websites could improve the
-                    platform's versatility. Conclusion The web-based platform presented in
-                    this work provides an innovative approach to explore and understand
-                    the structural complexities of websites. By combining web crawling
-                    with D3.js visualization, users can gain valuable insights into the
-                    interconnected nature of online content. The challenges faced during
-                    the development process have been addressed, and future improvements
-                    hold promise for an even more comprehensive analysis of modern web
-                    structures.
+                    <h2>About</h2>
+                    <p>
+                        This project is a web-based platform that allows users to explore
+                        the structures of websites through an interactive graph generated
+                        using D3.js. The platform utilizes a simple web crawler script,
+                        employing the breadth-first search algorithm to traverse websites
+                        by mapping link elements in their HTML to collect data about their
+                        interconnections and visualize it.
+                    </p>
+                    <p>
+                        By entering a domain in the input field, you will prompt the
+                        crawler script to explore and map the respective website, building
+                        its graph. In the resulting graph, nodes represent individual
+                        pages, while links between nodes signify their associations.
+                    </p>
+                    <p>
+                        Here I will discuss the design and implementation of the platform,
+                        the challenges faced during its development, and limitations
+                        related to certain web technologies.
+                    </p>
+                    <h2>Web Crawler Overview</h2>
+                    <p>
+                        Upon entering a domain, its URL is sent to the server to handle
+                        cross-origin requests, where the web crawler runs starting with
+                        the root page.
+                    </p>
+                    <p>The code looks something like this:</p>
+                    <pre>
+                        <code>
+                            <span class="opeartor">async function</span> <span class="name">crawler</span>({ url, explored, maxNodeCount }) {
+                                <span class="opeartor">if</span> (!<span class="name">validateURL</span>(url)) <span class="opeartor">throw</span> new Error('URL is invalid');
+
+                                const treeRoot = new InnerNode(url);
+                                const toVisit = [treeRoot];
+
+                                <span class="comment">// Breadth-first search</span>
+                                <span class="opeartor">while</span> (toVisit.length) {
+                                    const currentlyVisiting = toVisit.shift();
+                                    <span class="comment">// Stop condition: already explored or another domain</span>
+                                    <span class="opeartor">if</span> (explored.has(currentlyVisiting.url.href) || !currentlyVisiting.inner) <span class="opeartor">continue</span>;
+
+                                    <span class="comment">//Remember that we visited the nodes</span>
+                                    explored.add(currentlyVisiting.url.href);
+                                    currentlyVisiting.explored = true;
+
+                                    <span class="comment">// Process each site for links by building it's DOM</span>
+                                    const containedNodes = <span class="opeartor">await</span> <span class="name">processUrl</span>(currentlyVisiting.url);
+                                    containedNodes.forEach((node) => {
+                                        currentlyVisiting.connect(node);
+                                    });
+                                    toVisit.push(...containedNodes);
+                                }
+                                <span class="opeartor">return</span> { treeRoot, explored };
+                            }
+                        </code>
+                    </pre>
+                    <p>
+                        As each page is visited, relevant information, such as page URLs
+                        and their associated links, is collected and stored in a data
+                        structure suitable for the graph. This data is sent to the
+                        front-end, processed, and visualized using D3.js to create the
+                        interactive graph.
+                    </p>
+                    <h2>Graph Visualization with D3.js</h2>
+                    <p>
+                        D3.js provides a lot of useful tools for data visualization.
+                        Specifically, for creating graphs, there is a force-simulation
+                        API. Working with it involves the following steps:
+                    </p>
+                    <ol>
+                        <li>
+                            <b>Creating a simulation</b> from a collection of data with
+                            respective arrays <code>nodes</code> and
+                            <code>links</code> using D3.js methods
+                            <code>d3.forceSimulation(data.nodes)</code>,
+                        </li>
+                        <li>
+                            <b>Adding desired forces</b> to it (fine-tuning strength
+                            coefficients of said forces to achieve the preferred look and
+                            feel of the graph proved to be a challenging process). The
+                            most notable forces used in this project are:
+                            <code>'link'</code> - to connect the nodes,
+                            <code>'charge'</code> - to make them repel from one another.
+                            There are others to position the graph and make nodes of the
+                            same domain stick closer to each other.
+                        </li>
+                        <li>
+                            <b>Visualizing nodes and links</b> by creating the
+                            <code>'line'</code> and <code>'circle'</code> selections,
+                            associating them with respective data, and representing them
+                            with SVG elements. For instance, code for creating a
+                            <code>'line'</code> selection can look like this:
+                            <pre>
+                                <code>
+                                    let linkGroup = svg.select('g.links');
+                                    <span class="opeartor">if</span> (linkGroup.empty()) linkGroup = svg.append('g').attr('class', 'links');
+                                    const links = linkGroup.selectAll('line')
+                                        .data(data.links, (d) => `${d.source.id}-${d.target.id}`)
+                                        .enter()
+                                        .append('line')
+                                        .attr('stroke', linkColor)
+                                        .attr('stroke-width', (d) => d.strength)
+                                        <span class="comment">//Style the end of the line with an arrowhead with respective direction
+                                        //or color link separately if connection is in both directions</span>
+                                        .each(function (d) {
+                                            const link = d3.select(this);
+                                            const reverseLink = data.links.find(
+                                                (l) => l.source.id === d.target.id && l.target.id === d.source.id
+                                            );
+                                            <span class="opeartor">if</span> (reverseLink) {
+                                                d.bidirectional = true;
+                                                reverseLink.bidirectional = true;
+                                                link.attr('stroke', bidirectionalLinkColor).attr('marker-end', '');
+                                            } <span class="opeartor">else</span> {
+                                                link.attr('marker-end', 'url(#arrowhead)');
+                                            }
+                                        });
+                                </code>
+                            </pre>
+                            Selections can later be updated when new nodes and links are
+                            added.
+                        </li>
+                    </ol>
+                    <h2>Challenges and Limitations</h2>
+                    <p>
+                        It is important to note that in this project, site connections are
+                        found by extracting links from their HTML and such approach, even
+                        though it works in many cases, will not suffice for pages that
+                        load content dynamically, and most projects using frameworks like
+                        React or Angular do so. To properly crawl JavaScript-generated
+                        websites it would require to execute all of the page's scripts and
+                        generate its HTML. That can be done with a headless browser, but
+                        such process is more computationally intensive and, perhaps,
+                        unsuit for rendering graphs dynamically. So crawling such websites
+                        is out of scope of this project.
+                    </p>
+                    <p>
+                        Even without scraping JavaScript-generated websites, and using a
+                        rather straightforward algorithm, there are still some caveats
+                        that mostly come down to dealing with URLs.
+                    </p>
+                    <p>
+                        Firstly, URLs needs to be validated to ensure that the crawler
+                        identifies and collects only relevant links within websites.
+                        Non-website elements need to be excluded, such as email addresses,
+                        telephone numbers script files, etc. Additionally, resolving links
+                        can be tricky due to various link types, including absolute,
+                        relative, and those within the scope of the <code>base</code> tag,
+                        which can contain relative links themselves. All of those
+                        scenarious needs to be accounted for.
+                    </p>
+                    <p>
+                        Another thing to note To improve efficiency and user experience,
+                        it is important to save memoized data about explored links. This
+                        allows the crawler to recall previously visited pages, avoiding
+                        redundant explorations when users decide to map the graph further
+                        or revisit the same domain. Efficient memoization helps reduce
+                        redundant HTTP requests and speeds up the graph exploration
+                        process.
+                    </p>
                 </article>
             </div>
         </div>
