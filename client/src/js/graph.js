@@ -200,6 +200,8 @@ export function createGraph({
         }
         currentlyLoading.add(d.id);
         d.explored = true;
+        const clickMe = tooltip.select('.tooltip-clickme');
+        clickMe.remove();
         // Get new nodes and links data
         const settings = {
             url: d.id,
@@ -222,6 +224,7 @@ export function createGraph({
             if (error.message === 'Unable to fetch URL') restartSimulation(0.5);
             else console.log(error);
         } finally {
+            console.log(data);
             restartSimulation();
         }
 
@@ -244,7 +247,7 @@ export function createGraph({
             const clickMe =
                 d.explored === true
                     ? ''
-                    : `</br><p class="tooltip-clickme">click to to crawl!</p>`;
+                    : `</br><span class="tooltip-clickme">click to to crawl!</span>`;
             // Style tooltip
             tooltip
                 .html(
@@ -308,7 +311,7 @@ export function createGraph({
         delayRemoveTooltip = setTimeout(() => {
             tooltip.html('').style('visibility', 'hidden');
             tooltipFullLink.style.opacity = 0;
-        }, 400);
+        }, 600);
         tooltip.on('pointerover', tooltipStayOn);
         tooltip.on('pointerleave', tooltipLeave);
         // Remove styles from bottom tooltip, nodes and links
