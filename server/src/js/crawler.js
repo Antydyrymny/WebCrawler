@@ -1,4 +1,3 @@
-import normalizeUrl from 'normalize-url';
 import { InnerNode, OuterNode } from './siteNodes.js';
 import { JSDOM } from 'jsdom';
 
@@ -43,7 +42,7 @@ async function crawler({ url: urlString, explored, maxNodeCount }) {
     }
     return { treeRoot, exploredUpdated: explored };
 }
-let flag = true;
+
 // Return URL object from valid urls, false otherwise
 function validateURL({ urlString, base, origin = '', pathname = '' }) {
     if (!urlString) return false;
@@ -60,25 +59,11 @@ function validateURL({ urlString, base, origin = '', pathname = '' }) {
     // Absolute link or base
     try {
         const validURL = base ? new URL(urlString, base) : new URL(urlString);
-        if (flag) {
-            console.log('here');
-            console.log(validURL, normalizeURL(validURL));
-            flag = false;
-        }
-        // return new URL(normalizeUrl(validURL.href));
-        // return validURL;
         return normalizeURL(validURL);
     } catch (errRelLink) {
         // Relative link
         try {
             const validURL = new URL(urlString, `${origin}${pathname}`);
-            if (flag) {
-                console.log('here');
-                console.log(validURL, normalizeURL(validURL));
-                flag = false;
-            }
-            // return new URL(normalizeUrl(validURL.href));
-            // return validURL;
             return normalizeURL(validURL);
         } catch (err) {
             // Invalid link
@@ -124,9 +109,8 @@ function normalizeURL(urlObj) {
         .map((query) => `${query}=${searchParams.get(query)}`);
     // Canonize
     const normalizedURLstring = `${protocol}//${domain}${lowerCasePath}${
-        sortedQuery ? '?' + sortedQuery : ''
+        sortedQuery.length ? '?' + sortedQuery : ''
     }`;
-    // const normalizedURLstring = `${protocol}//${domain}${lowerCasePath}?${searchParams}`;
     return new URL(normalizedURLstring);
 }
 
@@ -178,9 +162,3 @@ async function parseHTML(htmlString, domain, origin, pathname) {
 }
 
 export { crawler, validateURL, processURL, parseHTML };
-
-// const url = 'https://www.google.com/imghp?hl%3Dka%2Ctab%3Dwi';
-// const urlObj = new URL(url);
-// // console.log(normalizeURL(urlObj).href, normalizeUrl(url));
-// console.log(normalizeURL(urlObj).href === normalizeURL(normalizeURL(urlObj)).href);
-// // console.log(normalizeUrl(url) === normalizeUrl(normalizeUrl(url)));

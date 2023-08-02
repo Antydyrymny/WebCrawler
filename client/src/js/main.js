@@ -3,9 +3,9 @@ import { crawlDataExample1, graphDataExample1 } from '../exampleGraphs/exampleGr
 import { crawlDataExample2, graphDataExample2 } from '../exampleGraphs/exampleGraph2.js';
 import { crawlDataExample3, graphDataExample3 } from '../exampleGraphs/exampleGraph3.js';
 
-const route = `http://localhost:3000/api`;
+// const route = `http://localhost:3000/api`;
 // const route = 'https://graph-crawler-server.onrender.com/api';
-// const route = 'https://web-crawler-server.vercel.app/api';
+const route = 'https://web-crawler-server.vercel.app/api';
 
 const form = document.querySelector('form');
 const graph = document.querySelector('.graph');
@@ -35,7 +35,7 @@ example2.addEventListener('click', () => {
 example3.addEventListener('click', () => {
     clearGraph();
     crawlData = crawlDataExample3;
-    createGraph({ data: graphDataExample3, initialScale: 0.8 });
+    createGraph({ data: graphDataExample3, initialScale: 1.2 });
 });
 
 // On form submit:
