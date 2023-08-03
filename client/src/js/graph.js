@@ -104,12 +104,11 @@ export function createGraph({
     let delayRemoveTooltip = null;
     // Variables to track hovering and dragging
     let hovering = false;
+    let hoverTarget = null;
     let dragging = false;
     // Create the arrowhead markers
     createArrowhead();
     createArrowhead(linkHightlightColor);
-
-    const scrollbarWidth = getScrollbarWidth();
 
     function createArrowhead(color = linkColor) {
         const namePostfix = color === linkColor ? '' : color;
@@ -240,6 +239,7 @@ export function createGraph({
         const pointerOverFunction = () => {
             // Manage previous hovering on nodes and tooltip
             hovering = true;
+            hoverTarget = d;
             tooltipStayOn();
             tooltipLeave();
             const content = new URL(d.id);
@@ -300,12 +300,11 @@ export function createGraph({
     }
 
     // On pointer leave function
-    function tooltipPointerleave(event, d, binding) {
-        // Check if still dragging
-        if (dragging) return;
-        // Check if not hovering a node
-        if (!hovering) return;
+    function tooltipPointerleave(event, d) {
         hovering = false;
+        // hoverTarget = null;
+        // Check if still dragging or if not hovering a node
+        if (dragging) return;
         // Add tooltip hover functionality and remove styling from it
         delayRemoveTooltip = setTimeout(() => {
             tooltip.html('').style('visibility', 'hidden');
@@ -314,7 +313,11 @@ export function createGraph({
         tooltip.on('pointerover', tooltipStayOn);
         tooltip.on('pointerleave', tooltipLeave);
         // Remove styles from bottom tooltip, nodes and links
-        d3.select(binding ? binding : this).attr('r', nodeSize);
+        if (this?.id && this.id === d.id) d3.select(this).attr('r', nodeSize);
+        else
+            d3.selectAll('circle')
+                .filter((c) => c.id === d.id)
+                .attr('r', nodeSize);
         const linksConnected = svg
             .selectAll('line')
             .filter((l) => l.target.id === d.id || l.source.id === d.id)
@@ -353,6 +356,10 @@ export function createGraph({
         d.fx = null;
         d.fy = null;
         dragging = false;
+        if (!hovering) {
+            tooltipPointerleave(null, hoverTarget);
+            hoverTarget = null;
+        }
     }
 
     // Update the positions of the nodes and links on every tick of the simulation
@@ -375,19 +382,4 @@ export function createGraph({
             .attr('cx', (d) => d.x)
             .attr('cy', (d) => d.y);
     });
-}
-
-function getScrollbarWidth() {
-    const div = document.createElement('div');
-    div.style.width = '100px';
-    div.style.height = '100px';
-    div.style.overflow = 'scroll';
-    div.style.position = 'absolute';
-    div.style.top = '-1000px';
-
-    document.body.appendChild(div);
-    const scrollbarWidth = div.offsetWidth - div.clientWidth;
-    document.body.removeChild(div);
-
-    return scrollbarWidth;
 }
