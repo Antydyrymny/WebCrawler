@@ -87,24 +87,29 @@
                 <article>
                     <h2>About</h2>
                     <p>
-                        This project is a web-based platform that allows users to explore
-                        the structures of websites through an interactive graph generated
-                        using D3.js library. By entering a domain in the input field, you
-                        will prompt the crawler script to explore and map the respective
-                        website, building its graph. In the resulting graph, nodes
-                        represent individual pages, while links between nodes signify
-                        their associations.
+                        This project serves as a platform for representing websites and
+                        their links through interactive graphs. Each graph node
+                        corresponds to a website, and the connections between nodes
+                        symbolize the links found on those websites. Nodes sharing the
+                        same color belong to the same domain. By entering a URL or domain
+                        in the input field, you will run the crawler script, mapping the
+                        relevant website and constructing its graph. To expand the graph,
+                        you may click on individual nodes, which generates the graph for
+                        the selected websites.
                     </p>
                     <p>
                         The platform utilizes a simple web crawler script, employing the
-                        breadth-first search algorithm to traverse websites by mapping
+                        breadth-first search algorithm to traverse websites by parsing
                         link elements in their HTML to collect data about their
-                        interconnections and visualize it.
+                        interconnections and visualize it using D3.js library. However,
+                        the script's current approach has a limitation - it cannot map
+                        websites with script-generated HTML, thus rendering it ineffective
+                        for some pages.
                     </p>
                     <p>
-                        Here I will discuss the design and implementation of the platform,
-                        the challenges faced during its development, and limitations
-                        related to certain web technologies.
+                        In this article, I will delve into the design and implementation
+                        of the platform, discussing the challenges faced during its
+                        development, as well as exploring platform's limitations.
                     </p>
                     <h2>Web Crawler Overview</h2>
                     <p>

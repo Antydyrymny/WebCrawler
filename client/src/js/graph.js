@@ -38,9 +38,6 @@ export function createGraph({
         .translate(containerCenterX - zoomedCenterX, containerCenterY - zoomedCenterY)
         .scale(initialScale);
 
-    // Define the color scale for the groups
-    const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
-
     // Define the simulation with forces
     const simulation = d3
         .forceSimulation(data.nodes)
@@ -87,6 +84,8 @@ export function createGraph({
             })
         );
 
+    // Define the color scale for the groups
+    const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
     // Define tooltip
     const tooltip = d3
         .select('.graph')
@@ -150,7 +149,7 @@ export function createGraph({
             .enter()
             .append('line')
             .attr('stroke', linkColor)
-            .attr('stroke-width', (d) => d.strength)
+            .attr('stroke-width', (d) => 'd.strength')
             .each(function (d) {
                 const link = d3.select(this);
                 const reverseLink = data.links.find(

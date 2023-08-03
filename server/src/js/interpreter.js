@@ -19,16 +19,16 @@ export function interpretData({ treeRoot: tree, groups, baseGroup, addedNodes })
         if (!tree.inner) {
             let curGroup;
             let curDistanceGroup;
-            // Groups
+            // Color groups
             if (groups.includes(tree.url.hostname)) {
-                curGroup = +baseGroup + 1 + groups.indexOf(tree.url.hostname);
+                curGroup = groups.indexOf(tree.url.hostname);
             } else {
                 curGroup = +baseGroup + 1 + groups.length;
                 groups.push(tree.url.hostname);
             }
-            // Distance Groups
+            // Distance groups
             if (distanceGroups.includes(tree.url.hostname)) {
-                curDistanceGroup = 2 + distanceGroups.indexOf(tree.url.hostname);
+                curDistanceGroup = distanceGroups.indexOf(tree.url.hostname);
             } else {
                 curDistanceGroup = 2 + groups.length;
                 distanceGroups.push(tree.url.hostname);
