@@ -207,14 +207,15 @@
                         It is important to note that in this project, site connections are
                         found by extracting links from their HTML. While this approach
                         works in many cases, it may not suffice for pages that load
-                        content dynamically, especially those utilizing frameworks like
-                        React or Angular. To properly crawl JavaScript-generated websites,
-                        it would require executing all of the page's scripts and
-                        generating its HTML. This can be achieved with a headless browser,
-                        but such a process is more computationally intensive and may not
-                        be suitable for rendering graphs dynamically. Therefore, crawling
-                        such websites falls outside the scope of this project, which
-                        focuses on exploring static HTML-based websites.
+                        content dynamically and without pre-rendering, especially those
+                        utilizing frameworks like React or Angular. To properly crawl
+                        JavaScript-generated websites, it would require executing all of
+                        the page's scripts and generating its HTML. This can be achieved
+                        with a headless browser, but such a process is more
+                        computationally intensive and may not be suitable for rendering
+                        graphs dynamically. Therefore, crawling such websites falls
+                        outside the scope of this project, which focuses on exploring
+                        static HTML-based websites.
                     </p>
                     <p>
                         Even without scraping JavaScript-generated websites, and using a
