@@ -92,6 +92,8 @@ export function createGraph({
         .append('div')
         .attr('class', 'tooltip')
         .style('visibility', 'hidden');
+    tooltip.on('pointerover', tooltipStayOn);
+    tooltip.on('pointerleave', tooltipLeave);
     // Define bottom bar full site link
     const tooltipFullLink = document.createElement('span');
     document.querySelector('.svg-wrapper').append(tooltipFullLink);
@@ -103,6 +105,7 @@ export function createGraph({
     // Variable to store the timer for removing the tooltip
     let delayRemoveTooltip = null;
     // Variables to track hovering and dragging
+    let hoverDelay = null;
     let hovering = false;
     let hoverTarget = null;
     let dragging = false;
@@ -185,7 +188,7 @@ export function createGraph({
             )
             .on('pointerover', tooltipPointerover)
             .on('pointermove', tooltipPointermove)
-            .on('pointerleave', tooltipPointerleave)
+            .on('pointerleave', pointerLeaveFunction)
             .on('click', update);
     }
 
@@ -241,7 +244,6 @@ export function createGraph({
             hovering = true;
             hoverTarget = d;
             tooltipStayOn();
-            tooltipLeave();
             const content = new URL(d.id);
             const clickMe =
                 d.explored === true
@@ -281,15 +283,17 @@ export function createGraph({
                 )
                 .style('filter', 'brightness(50%)')
                 .style('filter', 'contrast(50%)');
-        };
-        const pointerLeaveFunction = () => {
-            clearTimeout(hoverDelay);
-            d3.select(this).on('pointerout', null);
+            // Remove hovering and tooltip when leaving
+            d3.select(this).on('pointerout', tooltipPointerleave);
         };
         // Wrap hover event in a timer
-        const hoverDelay = setTimeout(pointerOverFunction, 100);
-        // Cancel event if pointer left before delay
-        d3.select(this).on('pointerout', pointerLeaveFunction);
+        hoverDelay = setTimeout(pointerOverFunction, 100);
+    }
+
+    // On pointer leave function prevent starting hover
+    function pointerLeaveFunction() {
+        clearTimeout(hoverDelay);
+        hoverDelay = null;
     }
 
     // On move function
@@ -299,19 +303,16 @@ export function createGraph({
             .style('left', event.clientX + 15 + 'px');
     }
 
-    // On pointer leave function
+    // On leaving node that was hovered/dragged
     function tooltipPointerleave(event, d) {
         hovering = false;
-        // hoverTarget = null;
-        // Check if still dragging or if not hovering a node
+        // Check if still dragging
         if (dragging) return;
-        // Add tooltip hover functionality and remove styling from it
+        // Schedule removing tooltip
         delayRemoveTooltip = setTimeout(() => {
             tooltip.html('').style('visibility', 'hidden');
             tooltipFullLink.style.opacity = 0;
         }, 600);
-        tooltip.on('pointerover', tooltipStayOn);
-        tooltip.on('pointerleave', tooltipLeave);
         // Remove styles from bottom tooltip, nodes and links
         if (this?.id && this.id === d.id) d3.select(this).attr('r', nodeSize);
         else
@@ -326,7 +327,10 @@ export function createGraph({
         svg.selectAll('circle')
             .style('filter', 'brightness(100%)')
             .style('filter', 'contrast(100%)');
+        // Remove listener
+        d3.select(this).on('pointerout', null);
     }
+
     // On pointer entering the tooltip
     function tooltipStayOn() {
         clearTimeout(delayRemoveTooltip);
@@ -334,8 +338,6 @@ export function createGraph({
     }
     // On pointer leaving the tooltip
     function tooltipLeave() {
-        tooltip.on('pointerover', null);
-        tooltip.on('pointerleave', null);
         tooltip.html('').style('visibility', 'hidden');
         tooltipFullLink.style.opacity = 0;
     }
@@ -343,6 +345,7 @@ export function createGraph({
     // Define the drag functions
     function dragStarted(event, d) {
         dragging = true;
+        document.addEventListener('mouseup', dragEnded);
         if (!event.active) simulation.alphaTarget(0.3).restart();
         d.fx = d.x;
         d.fy = d.y;
@@ -360,6 +363,7 @@ export function createGraph({
             tooltipPointerleave(null, hoverTarget);
             hoverTarget = null;
         }
+        document.removeEventListener('mouseup', dragEnded);
     }
 
     // Update the positions of the nodes and links on every tick of the simulation

@@ -17,9 +17,9 @@ const example3 = document.querySelector('#galleryItem3');
 
 let crawlData = { explored: {}, addedNodes: {}, groups: [] };
 
-// Display example 1
-crawlData = crawlDataExample1;
-createGraph({ data: graphDataExample1 });
+// Display example 2
+crawlData = crawlDataExample2;
+createGraph({ data: graphDataExample2 });
 
 // Add event listeners to show other examples
 example1.addEventListener('click', () => {

@@ -239,11 +239,11 @@ svg {
 }
 
 #galleryItem2:hover::after {
-    content: 'MDN';
+    content: 'Google';
 }
 
 #galleryItem3:hover::after {
-    content: 'Google';
+    content: 'Stack Overflow';
 }
 
 .examplesGallery img {
